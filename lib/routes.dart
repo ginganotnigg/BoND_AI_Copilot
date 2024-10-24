@@ -1,5 +1,5 @@
-import 'package:bond/ui/register.dart';
-import 'package:bond/ui/login.dart';
+import 'package:bond/ui/auth_screen.dart';
+import 'package:bond/ui/pricing_screen.dart';
 import 'package:go_router/go_router.dart';
 
 // Import your screens
@@ -16,12 +16,16 @@ final GoRouter router = GoRouter(
     // Login Route
     GoRoute(
       path: '/login',
-      builder: (context, state) => const LoginScreen(),
+      builder: (context, state) => const AuthScreen(),
     ),
     // Other Routes
     GoRoute(
       path: '/register',
-      builder: (context, state) => const RegisterScreen(),
+      builder: (context, state) => const AuthScreen(),
+    ),
+    GoRoute(
+      path: '/pricing-plan',
+      builder: (context, state) => const PricingScreen(),
     )
   ],
 );
