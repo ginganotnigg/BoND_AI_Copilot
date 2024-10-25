@@ -105,3 +105,83 @@ void showPromptDialog(BuildContext context, String promptTitle) {
     },
   );
 }
+
+void showPublicPromptDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Prompt Library",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "Search...",
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        // Logic for adding new prompt
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  children: [
+                    _buildPromptTile("Revise Sentences",
+                        "Hãy sửa lại các câu của tôi cho đúng cú pháp trong tiếng anh"),
+                    _buildPromptTile("Recognize Language",
+                        "Identify the language of the input text."),
+                    _buildPromptTile("Improve Sentence",
+                        "Help improve the given sentence for better clarity."),
+                    _buildPromptTile(
+                        "Translate RU", "Translate the text to Russian."),
+                    // More prompt tiles...
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// Helper function to build individual prompt tiles
+Widget _buildPromptTile(String title, String description) {
+  return ListTile(
+    title: Text(title),
+    subtitle: Text(description),
+    trailing: const Icon(Icons.arrow_forward),
+    onTap: () {
+      // Handle prompt selection logic
+    },
+  );
+}

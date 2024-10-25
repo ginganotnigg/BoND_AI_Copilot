@@ -6,7 +6,7 @@ class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  _AuthScreenState createState() => _AuthScreenState();
+  State<AuthScreen> createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
@@ -39,12 +39,12 @@ class _AuthScreenState extends State<AuthScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'lib/assets/images/logo.png',
+                  'lib/assets/images/icon-48.png',
                   height: 50,
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  'Jarvis',
+                  'Bond',
                   style: TextStyle(
                     fontSize: 45,
                     fontWeight: FontWeight.bold,

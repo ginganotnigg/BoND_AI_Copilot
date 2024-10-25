@@ -15,10 +15,7 @@ class BondAI extends StatelessWidget {
     return MaterialApp.router(
       title: 'Bond AI Assistant',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      theme: ThemeData(fontFamily: 'Muli'),
       routerConfig: router,
     );
   }
@@ -97,7 +94,7 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () {
-                          // Placeholder action for "Start Free Trial"
+                          context.go('/pricing-plan');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blueAccent,
@@ -120,6 +117,7 @@ class HomeScreen extends StatelessWidget {
             DropdownButton<String>(
               value: 'GPT-4o mini',
               items: <String>[
+                'Add AI Assistant',
                 'GPT-4o mini',
                 'GPT-4o',
                 'Claude 3 Haiku',
@@ -132,7 +130,11 @@ class HomeScreen extends StatelessWidget {
                   child: Text(value),
                 );
               }).toList(),
-              onChanged: (newValue) {},
+              onChanged: (newValue) {
+                if (newValue == 'Add AI Assistant') {
+                  context.go('/assistant');
+                }
+              },
             ),
             Container(
               padding:
@@ -145,9 +147,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.generating_tokens),
-                    onPressed: () {
-                      // Placeholder action for chat bubble icon
-                    },
+                    onPressed: () => showPublicPromptDialog(context),
                   ),
                   const Expanded(
                     child: TextField(
