@@ -1,1 +1,1 @@
-[Video demo mock ui](https://drive.google.com/file/d/1mXjVUwHSXEGruMiXGVzt5jqVFC_9VQxJ/view?usp=sharing)
+[Video demo mock ui](https://studenthcmusedu-my.sharepoint.com/personal/21120053_student_hcmus_edu_vn/_layouts/15/stream.aspx?id=%2Fpersonal%2F21120053%5Fstudent%5Fhcmus%5Fedu%5Fvn%2FDocuments%2FDocuments%2FHCMUS%2FNAM%204%2Fmock%2Dui%2Emp4&ga=1&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E2a663303%2Dc84d%2D4fc7%2D8a45%2Df9cd5a9cbc5e)
