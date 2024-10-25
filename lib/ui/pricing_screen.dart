@@ -1,5 +1,6 @@
 import 'package:bond/styles/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PricingScreen extends StatelessWidget {
   const PricingScreen({super.key});
@@ -8,8 +9,15 @@ class PricingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white, // Màu nền của AppBar
-        elevation: 4.0, // Độ cao của bóng đổ
+        backgroundColor: Colors.white,
+        elevation: 4.0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.black),
+          iconSize: 35.0,
+          onPressed: () {
+            context.go('/'); // Navigate back to home route
+          },
+        ),
         title: Center(
           child: Text(
             "Pricing Plan",
@@ -20,10 +28,11 @@ class PricingScreen extends StatelessWidget {
             ),
           ),
         ),
+        centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(4.0), // Thêm thanh phân cách
+          preferredSize: Size.fromHeight(4.0),
           child: Container(
-            color: Colors.grey.shade300, // Màu thanh phân cách
+            color: Colors.grey.shade300,
             height: 4.0,
           ),
         ),
