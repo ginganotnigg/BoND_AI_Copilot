@@ -120,6 +120,7 @@ class HomeScreen extends StatelessWidget {
             DropdownButton<String>(
               value: 'GPT-4o mini',
               items: <String>[
+                'Add New',
                 'GPT-4o mini',
                 'GPT-4o',
                 'Claude 3 Haiku',
@@ -132,7 +133,14 @@ class HomeScreen extends StatelessWidget {
                   child: Text(value),
                 );
               }).toList(),
-              onChanged: (newValue) {},
+              onChanged: (newValue) {
+                if (newValue == 'Add New') {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => YourNewScreen()),
+                  // );
+                }
+              },
             ),
             Container(
               padding:
