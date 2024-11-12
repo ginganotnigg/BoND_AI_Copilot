@@ -3,7 +3,7 @@ import 'package:bond/ui/auth/pricing_screen.dart';
 import 'package:bond/ui/chat/assistant_screen.dart';
 import 'package:bond/ui/chat/chat_screen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:bond/ui/home.dart';
+import 'package:bond/ui/home/home.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/',
