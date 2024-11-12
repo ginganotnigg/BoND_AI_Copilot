@@ -30,7 +30,7 @@ class PricingScreen extends StatelessWidget {
         ),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(4.0),
+          preferredSize: const Size.fromHeight(4.0),
           child: Container(
             color: Colors.grey.shade300,
             height: 4.0,

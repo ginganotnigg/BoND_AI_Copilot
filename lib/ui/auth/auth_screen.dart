@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bond/styles/styles.dart';
-import 'package:go_router/go_router.dart'; // Import file chứa styles
+import 'package:go_router/go_router.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -65,7 +65,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
-                  backgroundColor: Color.fromARGB(255, 245, 244, 250),
+                  backgroundColor: const Color.fromARGB(255, 245, 244, 250),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
               ),

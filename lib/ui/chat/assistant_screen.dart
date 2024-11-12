@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:bond/ui/create_bot.dart';
+import 'package:bond/ui/chat/create_bot.dart';
 
 class AssistantScreen extends StatelessWidget {
   const AssistantScreen({super.key});

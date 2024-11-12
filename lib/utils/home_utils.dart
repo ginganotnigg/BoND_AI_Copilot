@@ -1,4 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:bond/global.dart';
+
+Widget buildIconWithText(IconData icon, String text) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, color: secondaryColor),
+      Text(text, style: const TextStyle(color: secondaryColor)),
+    ],
+  );
+}
+
+Widget buildListTile(BuildContext context, String text) {
+  return ListTile(
+    title: Text(text, style: const TextStyle(color: secondaryColor)),
+    trailing: const Icon(Icons.arrow_forward, color: secondaryColor),
+    onTap: () {
+      showPromptDialog(context, text);
+    },
+  );
+}
 
 void showPromptDialog(BuildContext context, String promptTitle) {
   showDialog(

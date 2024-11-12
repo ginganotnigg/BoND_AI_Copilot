@@ -1,3 +1,4 @@
+import 'package:bond/global.dart';
 import 'package:flutter/material.dart';
 
 class CreateBotScreen extends StatelessWidget {
@@ -48,7 +49,7 @@ class CreateBotScreen extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
-                backgroundColor: Color.fromARGB(255, 245, 244, 250),
+                backgroundColor: const Color.fromARGB(255, 245, 244, 250),
               ),
               child: const Text('Upload'),
             ),
@@ -60,20 +61,14 @@ class CreateBotScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Color.fromARGB(255, 245, 244, 250),
-                  ),
+                  style: outlined,
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // Handle OK button click
                   },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Color.fromARGB(255, 245, 244, 250),
-                  ),
+                  style: filled,
                   child: const Text('OK'),
                 ),
               ],

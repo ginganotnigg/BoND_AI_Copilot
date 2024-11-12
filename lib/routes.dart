@@ -1,8 +1,9 @@
-import 'package:bond/ui/auth_screen.dart';
-import 'package:bond/ui/pricing_screen.dart';
-import 'package:bond/ui/assistant_screen.dart';
+import 'package:bond/ui/auth/auth_screen.dart';
+import 'package:bond/ui/auth/pricing_screen.dart';
+import 'package:bond/ui/chat/assistant_screen.dart';
+import 'package:bond/ui/chat/chat_screen.dart';
 import 'package:go_router/go_router.dart';
-import 'main.dart';
+import 'package:bond/ui/home.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/',
@@ -26,6 +27,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/assistant',
       builder: (context, state) => const AssistantScreen(),
+    ),
+    GoRoute(
+      path: '/ai-chat',
+      builder: (context, state) => const ChatScreen(),
     ),
   ],
 );
