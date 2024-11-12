@@ -107,6 +107,17 @@ void showPromptDialog(BuildContext context, String promptTitle) {
 }
 
 void showPublicPromptDialog(BuildContext context) {
+  List<Map<String, String>> publicPrompts = [
+    {'name': 'Prompt 1', 'description': 'Description for Prompt 1'},
+    {'name': 'Prompt 2', 'description': 'Description for Prompt 2'},
+  ];
+  List<Map<String, String>> privatePrompts = [
+    {'name': 'Prompt 1', 'description': 'Description for Prompt 1'},
+    {'name': 'Prompt 2', 'description': 'Description for Prompt 2'},
+  ];
+
+  String searchText = '';
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -114,59 +125,36 @@ void showPublicPromptDialog(BuildContext context) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          height: MediaQuery.of(context).size.height * 0.6,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  "Prompt Library",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: DefaultTabController(
+          length: 2,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Prompt Library",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search...",
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        // Logic for adding new prompt
-                      },
-                    ),
+                const TabBar(
+                  tabs: [
+                    Tab(text: 'My Prompts'),
+                    Tab(text: 'Public Prompts'),
                   ],
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    _buildPromptTile("Revise Sentences",
-                        "Hãy sửa lại các câu của tôi cho đúng cú pháp trong tiếng anh"),
-                    _buildPromptTile("Recognize Language",
-                        "Identify the language of the input text."),
-                    _buildPromptTile("Improve Sentence",
-                        "Help improve the given sentence for better clarity."),
-                    _buildPromptTile(
-                        "Translate RU", "Translate the text to Russian."),
-                    // More prompt tiles...
-                  ],
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      _buildPromptList(context, publicPrompts, searchText),
+                      _buildPromptList(context, privatePrompts, searchText),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -174,14 +162,218 @@ void showPublicPromptDialog(BuildContext context) {
   );
 }
 
-// Helper function to build individual prompt tiles
-Widget _buildPromptTile(String title, String description) {
+Widget _buildPromptList(BuildContext context, List<Map<String, String>> prompts,
+    String searchText) {
+  return Column(
+    children: [
+      const SizedBox(height: 20),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                onChanged: (value) {
+                  searchText = value;
+                },
+                decoration: InputDecoration(
+                  hintText: "Search...",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                _showAddPromptDialog(context);
+              },
+            ),
+          ],
+        ),
+      ),
+      Expanded(
+        child: ListView(
+          children: prompts
+              .where((prompt) => prompt['name']!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()))
+              .map((prompt) => _buildPromptTile(context, prompt))
+              .toList(),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildPromptTile(BuildContext context, Map<String, String> prompt) {
   return ListTile(
-    title: Text(title),
-    subtitle: Text(description),
-    trailing: const Icon(Icons.arrow_forward),
-    onTap: () {
-      // Handle prompt selection logic
+    title: Text(prompt['name']!),
+    subtitle: Text(prompt['description']!),
+    trailing: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.edit),
+          onPressed: () {
+            _showEditPromptDialog(context, prompt);
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {
+            // Logic for deleting the prompt
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+void _showAddPromptDialog(BuildContext context) {
+  String name = '';
+  String prompt = '';
+  bool isPrivate = true;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("New Prompt"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ToggleButtons(
+              isSelected: [isPrivate, !isPrivate],
+              onPressed: (int index) {
+                isPrivate = index == 0;
+                // Trigger a rebuild
+                (context as Element).markNeedsBuild();
+              },
+              color: Colors.black,
+              selectedColor: Colors.white,
+              fillColor: Colors.blue,
+              borderColor: Colors.grey,
+              selectedBorderColor: Colors.blue,
+              borderRadius: BorderRadius.circular(8.0),
+              children: const [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text("Private"),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text("Public"),
+                ),
+              ],
+            ),
+            TextField(
+              onChanged: (value) => name = value,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                hintText: 'Name of the prompt',
+              ),
+            ),
+            TextField(
+              onChanged: (value) => prompt = value,
+              decoration: const InputDecoration(
+                labelText: 'Prompt',
+                hintText: 'Prompt content',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implement your add prompt logic here
+              // e.g., addPrompt(name, prompt, isPrivate);
+              Navigator.pop(context);
+            },
+            child: const Text("Create"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showEditPromptDialog(BuildContext context, Map<String, String> prompt) {
+  String name = prompt['name'] ?? '';
+  String content = prompt['description'] ?? '';
+  bool isPrivate = prompt['type'] == 'private';
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Update Prompt"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ToggleButtons(
+              isSelected: [isPrivate, !isPrivate],
+              onPressed: (int index) {
+                isPrivate = index == 0;
+                // Trigger a rebuild
+                (context as Element).markNeedsBuild();
+              },
+              color: Colors.black,
+              selectedColor: Colors.white,
+              fillColor: Colors.blue,
+              borderColor: Colors.grey,
+              selectedBorderColor: Colors.blue,
+              borderRadius: BorderRadius.circular(8.0),
+              children: const [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text("Private"),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text("Public"),
+                ),
+              ],
+            ),
+            TextField(
+              onChanged: (value) => name = value,
+              controller: TextEditingController(text: name),
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                hintText: 'Name of the prompt',
+              ),
+            ),
+            TextField(
+              onChanged: (value) => content = value,
+              controller: TextEditingController(text: content),
+              decoration: const InputDecoration(
+                labelText: 'Prompt',
+                hintText: 'Prompt content',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implement your update prompt logic here
+              // e.g., updatePrompt(name, content, isPrivate);
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      );
     },
   );
 }
