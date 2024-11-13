@@ -1,5 +1,5 @@
 import 'package:bond/global.dart';
-import 'package:bond/ui/home/home_utils.dart';
+import 'package:bond/ui/promt/prompt_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bond/bloc/chat_bloc/chat_bloc.dart';
@@ -23,7 +23,7 @@ class AIChatInput extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.generating_tokens, color: primaryColor),
-            onPressed: () => showPublicPromptDialog(context),
+            onPressed: () => showPromptManagementDialog(context),
           ),
           Expanded(
             child: TextField(

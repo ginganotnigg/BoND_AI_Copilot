@@ -35,3 +35,19 @@ const String baseUrl = 'https://api.jarvis.cx/api';
 const String aiChatUrl = '$baseUrl/v1/ai-chat';
 const String loginUrl = '$baseUrl/v1/auth/login';
 const String signUpUrl = '$baseUrl/v1/auth/signup';
+const String promptUrl = '$baseUrl/api/v1/prompts';
+
+// Enum
+enum PromptCategory {
+  business,
+  career,
+  chatbot,
+  coding,
+  education,
+  fun,
+  marketing,
+  other,
+  productivity,
+  seo,
+  writing,
+}
