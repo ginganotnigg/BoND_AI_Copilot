@@ -18,7 +18,7 @@ class BondAI extends StatelessWidget {
     return MaterialApp.router(
       title: 'Bond AI Assistant',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Arya'),
+      theme: ThemeData(fontFamily: 'FiraSans'),
       routerConfig: router,
     );
   }

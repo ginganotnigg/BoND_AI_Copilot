@@ -1,24 +1,32 @@
+import 'package:bond/models/chat_message.dart';
 import 'package:equatable/equatable.dart';
 
-class ChatState extends Equatable {
-  final List<Map<String, String>> messages;
-  final bool isLoading;
+abstract class ChatState extends Equatable {
+  final List<ChatMessage> chatHistory;
 
-  const ChatState({
-    this.messages = const [],
-    this.isLoading = false,
-  });
-
-  ChatState copyWith({
-    List<Map<String, String>>? messages,
-    bool? isLoading,
-  }) {
-    return ChatState(
-      messages: messages ?? this.messages,
-      isLoading: isLoading ?? this.isLoading,
-    );
-  }
+  const ChatState(this.chatHistory);
 
   @override
-  List<Object?> get props => [messages, isLoading];
+  List<Object> get props => [chatHistory];
+}
+
+class ChatInitial extends ChatState {
+  ChatInitial() : super([]);
+}
+
+class ChatLoading extends ChatState {
+  const ChatLoading(super.chatHistory);
+}
+
+class ChatResponseReceived extends ChatState {
+  const ChatResponseReceived(super.chatHistory);
+}
+
+class ChatError extends ChatState {
+  final String error;
+
+  const ChatError(super.chatHistory, this.error);
+
+  @override
+  List<Object> get props => [chatHistory, error];
 }

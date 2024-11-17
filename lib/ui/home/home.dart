@@ -1,17 +1,11 @@
 import 'package:bond/global.dart';
-import 'package:bond/ui/chat/ai_dropdown.dart';
 import 'package:bond/ui/chat/chat_input.dart';
 import 'package:bond/ui/home/home_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:bond/bloc/chat_bloc/chat_bloc.dart';
-import 'package:bond/bloc/chat_bloc/chat_event.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key
-  });
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -24,11 +18,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       selectedModel = model;
     });
-  }
-
-  void sendMessageToChat(BuildContext context, String message) {
-    context.read<ChatBloc>().add(InitializeChat(initialMessage: message));
-    context.go('/ai-chat');
   }
 
   @override
@@ -94,58 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             buildListTile(context, "Learn Code FAST!"),
             buildListTile(context, "Story generator"),
             const Spacer(),
-            AIModelDropdown(
-              selectedModel: selectedModel,
-              onModelSelected: onModelSelected,
-            ),
-            AIChatInput(),
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildIconWithText(Icons.bolt, "30"),
-                  buildIconWithText(Icons.rocket, "Upgrade"),
-                  IconButton(
-                    color: secondaryColor,
-                    icon: const Icon(Icons.star_border),
-                    onPressed: () {
-                      // Placeholder for favorite/star icon
-                    },
-                  ),
-                  IconButton(
-                    color: secondaryColor,
-                    icon: const Icon(Icons.help_outline),
-                    onPressed: () {
-                      // Placeholder for help icon
-                    },
-                  ),
-                  IconButton(
-                    color: secondaryColor,
-                    icon: const Icon(Icons.mail_outline),
-                    onPressed: () {
-                      // Placeholder for mail icon
-                    },
-                  ),
-                  IconButton(
-                    color: secondaryColor,
-                    icon: const Icon(Icons.devices),
-                    onPressed: () {
-                      // Placeholder for devices icon
-                    },
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      gradient: gradient,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const Center(child: Text("A")),
-                  ),
-                ],
-              ),
-            ),
+            const AIChatInput(),
           ],
         ),
       ),

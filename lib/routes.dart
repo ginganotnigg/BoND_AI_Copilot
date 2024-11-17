@@ -30,7 +30,10 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/ai-chat',
-      builder: (context, state) => const ChatScreen(),
+      builder: (context, state) {
+        final selectedModel = state.extra as String;
+        return ChatScreen(selectedModel: selectedModel);
+      },
     ),
   ],
 );

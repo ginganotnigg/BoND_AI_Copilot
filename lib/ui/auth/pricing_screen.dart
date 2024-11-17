@@ -1,4 +1,4 @@
-import 'package:bond/styles/styles.dart';
+import 'package:bond/global.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,11 +18,11 @@ class PricingScreen extends StatelessWidget {
             context.go('/'); // Navigate back to home route
           },
         ),
-        title: Center(
+        title: const Center(
           child: Text(
             "Pricing Plan",
             style: TextStyle(
-              color: primaryBlue,
+              color: secondaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 35.0,
             ),

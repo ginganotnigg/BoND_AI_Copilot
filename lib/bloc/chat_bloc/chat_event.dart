@@ -5,30 +5,13 @@ abstract class ChatEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class SendMessage extends ChatEvent {
+
+class SendMessageEvent extends ChatEvent {
   final String message;
-  final String type;
+  final String modelId;
 
-  SendMessage({required this.message, required this.type});
-
-  @override
-  List<Object?> get props => [message, type];
-}
-
-class ReceiveAIResponse extends ChatEvent {
-  final String aiMessage;
-
-  ReceiveAIResponse({required this.aiMessage});
+  SendMessageEvent(this.message, this.modelId);
 
   @override
-  List<Object?> get props => [aiMessage];
-}
-
-class InitializeChat extends ChatEvent {
-  final String? initialMessage;
-
-  InitializeChat({this.initialMessage});
-
-  @override
-  List<Object?> get props => [initialMessage];
+  List<Object> get props => [message, modelId];
 }

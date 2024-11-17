@@ -14,25 +14,26 @@ ButtonStyle outlined = ElevatedButton.styleFrom(
   backgroundColor: Colors.white,
   foregroundColor: primaryColor,
   side: const BorderSide(color: primaryColor),
-  textStyle: const TextStyle(fontSize: 16, fontFamily: 'Arya'),
+  textStyle: const TextStyle(fontSize: 16, fontFamily: 'FiraSans'),
 );
 
 ButtonStyle filled = ElevatedButton.styleFrom(
   backgroundColor: primaryColor,
   foregroundColor: Colors.white,
   textStyle: const TextStyle(
-      fontSize: 16, fontFamily: 'Arya', fontWeight: FontWeight.w700),
+      fontSize: 16, fontFamily: 'FiraSans', fontWeight: FontWeight.w700),
 );
 
 // Tokens
-const String jarvisToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5YWY1NWRjLTNlOWMtNDNhYi1hMWIyLTA5NTY4ZjQ0OTBjMyIsImVtYWlsIjoiYWxleGllOTkxMUBnbWFpbC5jb20iLCJpYXQiOjE3MzEyMjkzMjAsImV4cCI6MTczMTIzMTEyMH0.VfY0D6OB88wnZMjXkGJuQ62c_uCAs9q8Hs-ircYDZC4";
-
 const String jarvisGuid = "361331f8-fc9b-4dfe-a3f7-6d9a1e8b289b";
+
+const String jarvisToken =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMzgyYTZkLTMwYmItNGQ1Zi05YzVlLWU5NjlhNWFkYjcyMSIsImVtYWlsIjoicGhhbWNvbmdiYW5nMDNAZ21haWwuY29tIiwiaWF0IjoxNzMxODE1NDk0LCJleHAiOjE3MzE4MTcyOTR9.gmia5-f-4Jj5IEXlfTVvYk1lWNj0GG6e63jTXdH7Ydk";
 
 // URLs
 const String baseUrl = 'https://api.jarvis.cx/api';
 const String aiChatUrl = '$baseUrl/v1/ai-chat';
+const String allConversationsUrl = '$aiChatUrl/conversations';
 const String loginUrl = '$baseUrl/v1/auth/login';
 const String signUpUrl = '$baseUrl/v1/auth/signup';
 const String promptUrl = '$baseUrl/api/v1/prompts';

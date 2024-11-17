@@ -36,5 +36,3 @@ final InputDecoration emailFieldDecoration = textFieldDecoration.copyWith(
 final InputDecoration usernameFieldDecoration = textFieldDecoration.copyWith(
   hintText: 'Enter your username',
 );
-
-final Color primaryBlue = Color.fromARGB(255, 20, 80, 165);

@@ -1,5 +1,6 @@
+import 'package:bond/global.dart';
+import 'package:bond/ui/auth/auth_input.dart';
 import 'package:flutter/material.dart';
-import 'package:bond/styles/styles.dart';
 import 'package:go_router/go_router.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -43,12 +44,12 @@ class _AuthScreenState extends State<AuthScreen> {
                   height: 50,
                 ),
                 const SizedBox(width: 10),
-                Text(
+                const Text(
                   'Bond',
                   style: TextStyle(
                     fontSize: 45,
                     fontWeight: FontWeight.bold,
-                    color: primaryBlue,
+                    color: primaryColor,
                   ),
                 ),
               ],
@@ -117,13 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryBlue,
-                  padding: const EdgeInsets.all(20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
+                style: filled,
                 child: Text(
                   isLogin ? 'Login' : 'Register',
                   style: const TextStyle(
@@ -145,7 +140,7 @@ class _AuthScreenState extends State<AuthScreen> {
             const SizedBox(height: 20),
             const Text(
               'By continuing, you agree to our Privacy policy',
-              style: TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 12, fontFamily: 'Arya'),
               textAlign: TextAlign.center,
             ),
           ],

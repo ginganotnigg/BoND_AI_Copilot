@@ -126,3 +126,53 @@ void showPromptDialog(BuildContext context, String promptTitle) {
     },
   );
 }
+
+Widget footer(BuildContext context) {
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        buildIconWithText(Icons.bolt, "30"),
+        buildIconWithText(Icons.rocket, "Upgrade"),
+        IconButton(
+          color: secondaryColor,
+          icon: const Icon(Icons.star_border),
+          onPressed: () {
+            // Placeholder for favorite/star icon
+          },
+        ),
+        IconButton(
+          color: secondaryColor,
+          icon: const Icon(Icons.help_outline),
+          onPressed: () {
+            // Placeholder for help icon
+          },
+        ),
+        IconButton(
+          color: secondaryColor,
+          icon: const Icon(Icons.mail_outline),
+          onPressed: () {
+            // Placeholder for mail icon
+          },
+        ),
+        IconButton(
+          color: secondaryColor,
+          icon: const Icon(Icons.devices),
+          onPressed: () {
+            // Placeholder for devices icon
+          },
+        ),
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: const Center(child: Text("A")),
+        ),
+      ],
+    ),
+  );
+}
