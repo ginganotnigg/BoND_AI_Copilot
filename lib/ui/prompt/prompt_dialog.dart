@@ -1,10 +1,12 @@
+import 'package:bond/bloc/prompt_bloc/prompt_bloc.dart';
+import 'package:bond/bloc/prompt_bloc/prompt_event.dart';
 import 'package:bond/global.dart';
 import 'package:bond/models/prompt.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void showPromptDialog(BuildContext context,
     {Prompt? prompt, bool isEdit = true}) {
-  // Use StatefulWidget to retain the 'isPrivate' state
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -27,9 +29,9 @@ class _PromptDialog extends StatefulWidget {
 }
 
 class _PromptDialogState extends State<_PromptDialog> {
-  late String name;
-  late String description;
-  late String content;
+  late TextEditingController nameController;
+  late TextEditingController descriptionController;
+  late TextEditingController contentController;
   late bool isPrivate;
   PromptCategory? category;
   String? language;
@@ -39,13 +41,22 @@ class _PromptDialogState extends State<_PromptDialog> {
   @override
   void initState() {
     super.initState();
-    name = widget.prompt?.title ?? '';
-    description = widget.prompt?.description ?? '';
-    content = widget.prompt?.content ?? '';
+    nameController = TextEditingController(text: widget.prompt?.title ?? '');
+    descriptionController =
+        TextEditingController(text: widget.prompt?.description ?? '');
+    contentController =
+        TextEditingController(text: widget.prompt?.content ?? '');
     isPrivate = widget.prompt?.isPublic == false;
-    category = widget.prompt?.category ??
-        categoryOptions.first; // Set default category
-    language = widget.prompt?.language ?? 'English'; // Set default language
+    category = widget.prompt?.category ?? categoryOptions.first;
+    language = widget.prompt?.language ?? 'English';
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    contentController.dispose();
+    super.dispose();
   }
 
   @override
@@ -71,36 +82,30 @@ class _PromptDialogState extends State<_PromptDialog> {
             },
           ),
           TextField(
-            onChanged: (value) => setState(() => name = value),
-            controller: TextEditingController(text: name),
+            controller: nameController,
             decoration: const InputDecoration(
               labelText: 'Title',
               hintText: 'Title of the prompt',
             ),
           ),
-          // Use TextFormField with maxLines for longer input (description)
           TextFormField(
-            onChanged: (value) => setState(() => description = value),
-            controller: TextEditingController(text: description),
+            controller: descriptionController,
             decoration: const InputDecoration(
               labelText: 'Description',
               hintText: 'Prompt description',
             ),
-            maxLines: 4, // Allow multi-line input
+            maxLines: 4,
             keyboardType: TextInputType.multiline,
           ),
-          // Use TextFormField with maxLines for longer input (content)
           TextFormField(
-            onChanged: (value) => setState(() => content = value),
-            controller: TextEditingController(text: content),
+            controller: contentController,
             decoration: const InputDecoration(
               labelText: 'Content',
               hintText: 'Prompt content',
             ),
-            maxLines: 6, // Allow multi-line input for longer content
+            maxLines: 6,
             keyboardType: TextInputType.multiline,
           ),
-
           // Display category and language dropdowns only for public mode
           if (!isPrivate) ...[
             DropdownButton<PromptCategory>(
@@ -110,16 +115,13 @@ class _PromptDialogState extends State<_PromptDialog> {
               items: categoryOptions.map((PromptCategory category) {
                 return DropdownMenuItem<PromptCategory>(
                   value: category,
-                  child: Text(category
-                      .toString()
-                      .split('.')
-                      .last), // Display enum as string
+                  child:
+                      Text(category.toString().split('.').last.toUpperCase()),
                 );
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  category =
-                      value ?? categoryOptions.first; // Set fallback value
+                  category = value ?? categoryOptions.first;
                 });
               },
             ),
@@ -136,7 +138,7 @@ class _PromptDialogState extends State<_PromptDialog> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  language = value ?? 'English'; // Set fallback value
+                  language = value ?? 'English';
                 });
               },
             ),
@@ -152,7 +154,33 @@ class _PromptDialogState extends State<_PromptDialog> {
         ElevatedButton(
           style: filled,
           onPressed: () {
-            // Implement add/update prompt logic here
+            if (widget.isEdit) {
+              // Update an existing prompt
+              final updatedPrompt = Prompt(
+                title: nameController.text,
+                description: descriptionController.text,
+                content: contentController.text,
+                isPublic: !isPrivate,
+                category: category!,
+                language: language!,
+              );
+
+              context
+                  .read<PromptBloc>()
+                  .add(UpdatePromptEvent(widget.prompt!.id!, updatedPrompt));
+            } else {
+              // Add a new prompt
+              final newPrompt = Prompt(
+                title: nameController.text,
+                description: descriptionController.text,
+                content: contentController.text,
+                isPublic: !isPrivate,
+                category: category!,
+                language: language!,
+              );
+              context.read<PromptBloc>().add(CreatePromptEvent(newPrompt));
+            }
+
             Navigator.pop(context);
           },
           child: Text(widget.isEdit ? "Save" : "Create"),

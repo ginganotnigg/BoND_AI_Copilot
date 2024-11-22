@@ -31,24 +31,9 @@ const String jarvisToken =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMzgyYTZkLTMwYmItNGQ1Zi05YzVlLWU5NjlhNWFkYjcyMSIsImVtYWlsIjoicGhhbWNvbmdiYW5nMDNAZ21haWwuY29tIiwiaWF0IjoxNzMxODE1NDk0LCJleHAiOjE3MzE4MTcyOTR9.gmia5-f-4Jj5IEXlfTVvYk1lWNj0GG6e63jTXdH7Ydk";
 
 // URLs
-const String baseUrl = 'https://api.jarvis.cx/api';
+const String baseUrl = 'https://api.dev.jarvis.cx/api';
 const String aiChatUrl = '$baseUrl/v1/ai-chat';
 const String allConversationsUrl = '$aiChatUrl/conversations';
 const String loginUrl = '$baseUrl/v1/auth/login';
 const String signUpUrl = '$baseUrl/v1/auth/signup';
-const String promptUrl = '$baseUrl/api/v1/prompts';
-
-// Enum
-enum PromptCategory {
-  business,
-  career,
-  chatbot,
-  coding,
-  education,
-  fun,
-  marketing,
-  other,
-  productivity,
-  seo,
-  writing,
-}
+const String promptUrl = '$baseUrl/v1/prompts';
