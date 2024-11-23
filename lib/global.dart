@@ -40,18 +40,3 @@ const String allConversationsUrl = '$aiChatUrl/conversations';
 const String loginUrl = '$baseUrl/v1/auth/login';
 const String signUpUrl = '$baseUrl/v1/auth/signup';
 const String promptUrl = '$baseUrl/v1/prompts';
-
-// Enum
-enum PromptCategory {
-  business,
-  career,
-  chatbot,
-  coding,
-  education,
-  fun,
-  marketing,
-  other,
-  productivity,
-  seo,
-  writing,
-}
