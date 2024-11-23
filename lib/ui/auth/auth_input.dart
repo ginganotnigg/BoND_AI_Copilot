@@ -26,7 +26,6 @@ const InputDecoration textFieldDecoration = InputDecoration(
 
 final InputDecoration passwordFieldDecoration = textFieldDecoration.copyWith(
   hintText: 'Enter your password',
-  suffixIcon: const Icon(Icons.visibility_off),
 );
 
 final InputDecoration emailFieldDecoration = textFieldDecoration.copyWith(
@@ -35,4 +34,8 @@ final InputDecoration emailFieldDecoration = textFieldDecoration.copyWith(
 
 final InputDecoration usernameFieldDecoration = textFieldDecoration.copyWith(
   hintText: 'Enter your username',
+);
+
+final InputDecoration retypeFieldDecoration = textFieldDecoration.copyWith(
+  hintText: 'Re-enter your password',
 );

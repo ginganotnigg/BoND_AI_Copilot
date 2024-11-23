@@ -5,11 +5,14 @@ import 'package:bond/services/prompt_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc/auth_bloc/auth_bloc.dart';
+
 void main() {
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ChatBloc()),
+        BlocProvider(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => PromptBloc(PromptApi())),
       ],
       child: const BondAI(),
