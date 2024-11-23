@@ -1,6 +1,6 @@
 import 'package:bond/global.dart';
 import 'package:bond/ui/chat/ai_dropdown.dart';
-import 'package:bond/ui/home/home_utils.dart';
+import 'package:bond/ui/widget/home_utils.dart';
 import 'package:bond/ui/prompt/prompt_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

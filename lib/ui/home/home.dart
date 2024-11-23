@@ -1,6 +1,6 @@
 import 'package:bond/global.dart';
 import 'package:bond/ui/chat/chat_input.dart';
-import 'package:bond/ui/home/home_utils.dart';
+import 'package:bond/ui/widget/home_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
