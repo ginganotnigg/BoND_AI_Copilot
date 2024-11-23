@@ -13,7 +13,7 @@
         - [Mock-UI Demo](https://studenthcmusedu-my.sharepoint.com/personal/21120053_student_hcmus_edu_vn/_layouts/15/stream.aspx?id=%2Fpersonal%2F21120053%5Fstudent%5Fhcmus%5Fedu%5Fvn%2FDocuments%2FDocuments%2FHCMUS%2FNAM%204%2Fmock%2Dui%2Emp4&ga=1&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E2a663303%2Dc84d%2D4fc7%2D8a45%2Df9cd5a9cbc5e)
         - [Git Branch Mock-UI](https://github.com/ginganotnigg/BoND_AI_Copilot/tree/mock-ui)
     2. Basic features
-        -  [Basic-Feature Demo F2](https://drive.google.com/file/d/1vgT4qBL3nLWHqG7blIHi_2v21oPD06H3/view?usp=drive_link)
+        -  [Basic-Feature Demo F2]([https://drive.google.com/file/d/1vgT4qBL3nLWHqG7blIHi_2v21oPD06H3/view?usp=drive_link](https://drive.google.com/file/d/1Iq_vk05FvL5C1HEMw5d81wtZSYvq-qrD/view?usp=sharing))
         -  [Basic-Feature Demo F3 & F6](https://drive.google.com/file/d/1vgT4qBL3nLWHqG7blIHi_2v21oPD06H3/view?usp=drive_link)
         -  [Git Branch Basic-Feature](https://github.com/ginganotnigg/BoND_AI_Copilot/tree/mock-ui)
     3. Intermediate features
