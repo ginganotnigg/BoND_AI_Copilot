@@ -2,6 +2,7 @@ import 'package:bond/ui/auth/auth_screen.dart';
 import 'package:bond/ui/auth/pricing_screen.dart';
 import 'package:bond/ui/chat/assistant_screen.dart';
 import 'package:bond/ui/chat/chat_screen.dart';
+import 'package:bond/ui/chat/create_bot.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bond/ui/home/home.dart';
 
@@ -29,10 +30,19 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const AssistantScreen(),
     ),
     GoRoute(
+      path: '/create-bot',
+      builder: (context, state) => const CreateBotScreen(),
+    ),
+    GoRoute(
       path: '/ai-chat',
       builder: (context, state) {
-        final selectedModel = state.extra as String;
-        return ChatScreen(selectedModel: selectedModel);
+        final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
+        final selectedModel = extra['model'] as String;
+        final conversationId = extra['conversationId'] as String;
+        return ChatScreen(
+          selectedModel: selectedModel,
+          conversationId: conversationId,
+        );
       },
     ),
   ],

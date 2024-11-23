@@ -19,5 +19,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(ChatError(chatHistory, e.toString()));
       }
     });
+    on<GetConversationEvent>((ev, emit) async {
+      emit(const ChatLoading([]));
+      final chatApi = ChatApi();
+      try {
+        List<ChatMessage> messages =
+            await chatApi.getConvMessages(ev.message, ev.convId);
+        emit(ChatResponseReceived(messages));
+      } catch (e) {
+        emit(ChatError(const [], e.toString()));
+      }
+    });
   }
 }

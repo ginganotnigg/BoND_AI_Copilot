@@ -15,3 +15,13 @@ class SendMessageEvent extends ChatEvent {
   @override
   List<Object> get props => [message, modelId];
 }
+
+class GetConversationEvent extends ChatEvent {
+  final String message;
+  final String convId;
+
+  GetConversationEvent(this.message, this.convId);
+
+  @override
+  List<Object> get props => [message, convId];
+}

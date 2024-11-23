@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bond/global.dart';
+import 'package:bond/models/chat_message.dart';
 import 'package:bond/models/conversation.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,8 +25,6 @@ class ChatApi {
       if (response.statusCode == 200) {
         return jsonDecode(response.body)['message'];
       } else {
-        print('Error response status: ${response.statusCode}');
-        print('Error response body: ${response.body}');
         throw Exception('Failed to get response from AI');
       }
     } catch (e) {
@@ -33,24 +32,61 @@ class ChatApi {
     }
   }
 
-  Future<List<dynamic>> getConversations({int limit = 20}) async {
-    final url = Uri.parse(allConversationsUrl);
+  Future<List<Conversation>> getConversations(String model) async {
+    final String lowercaseModel = model.toLowerCase().replaceAll(' ', '-');
+    Map<String, String> params = {
+      'assistantId': lowercaseModel,
+      'assistantModel': 'dify',
+    };
+    final url = Uri.parse(allConversationsUrl).replace(queryParameters: params);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
       'Authorization': 'Bearer $jarvisToken',
       'Content-Type': 'application/json',
-      'limit': limit.toString(),
     };
 
     try {
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body)['items'] as List;
+        final List<dynamic> data = jsonDecode(response.body)['items'] as List;
         List<Conversation> conversations = data
             .map((conversation) => Conversation.fromJson(conversation))
             .toList();
         return conversations;
       } else {
+        throw Exception('Failed to fetch conversations');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch conversations: $e');
+    }
+  }
+
+  Future<List<ChatMessage>> getConvMessages(String model, String convId) async {
+    final String lowercaseModel = model.toLowerCase().replaceAll(' ', '-');
+    Map<String, String> params = {
+      'assistantId': lowercaseModel,
+      'assistantModel': 'dify',
+    };
+    final url = Uri.parse('$allConversationsUrl/$convId/messages/').replace(queryParameters: params);
+    final headers = {
+      'x-jarvis-guid': jarvisGuid,
+      'Authorization': 'Bearer $jarvisToken',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body)['items'] as List;
+        List<ChatMessage> messages = [];
+        for (var item in data) {
+          messages.add(ChatMessage.fromJson({'content': item['query']}, true));
+          messages.add(ChatMessage.fromJson({'content': item['answer']}, false));
+        }
+        return messages;
+      } else {
+        print('Error response status: ${response.statusCode}');
+        print('Error response body: ${response.body}');
         throw Exception('Failed to fetch conversations');
       }
     } catch (e) {
