@@ -1,6 +1,6 @@
+import 'package:bond/ui/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:bond/ui/chat/create_bot.dart';
 
 class AssistantScreen extends StatelessWidget {
   const AssistantScreen({super.key});
@@ -31,44 +31,19 @@ class AssistantScreen extends StatelessWidget {
               "Bond KB is a cutting-edge AI App development platform designed. With Bond KB, you can effortlessly create and deploy various chatbots across numerous social platforms and messaging apps like Messenger, Telegram, and Slack!",
             ),
             const SizedBox(height: 16),
-            _buildFeatureList(context),
+            featureList(context),
             // Add more widgets as per your UI design
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Action to create a new bot
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreateBotScreen()),
-          );
+          context.go('/create-bot');
         },
         icon: const Icon(Icons.add),
         label: const Text("Create Bot"),
         backgroundColor: Colors.blueAccent,
       ),
-    );
-  }
-
-  Widget _buildFeatureList(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ListTile(
-          leading: Icon(Icons.integration_instructions),
-          title: Text("Multi-Source Knowledge Integration 📚"),
-          subtitle: Text(
-              "Seamlessly integrate various types of knowledge from multiple data sources such as Websites, Google Drive, GitHub, GitLab, Notion, and more."),
-        ),
-        ListTile(
-          leading: Icon(Icons.developer_mode),
-          title: Text("Comprehensive SDK 🛠️"),
-          subtitle: Text(
-              "Our SDK provides the tools and resources needed to integrate chatbots into your own applications with ease."),
-        ),
-        // Add more features in the list
-      ],
     );
   }
 }

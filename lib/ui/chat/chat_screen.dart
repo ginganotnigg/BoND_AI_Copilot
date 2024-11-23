@@ -1,118 +1,115 @@
-import 'dart:io';
 import 'package:bond/global.dart';
 import 'package:bond/ui/chat/chat_input.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bond/ui/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bond/bloc/chat_bloc/chat_bloc.dart';
+import 'package:bond/bloc/chat_bloc/chat_event.dart';
 import 'package:bond/bloc/chat_bloc/chat_state.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatelessWidget {
   final String selectedModel;
-  const ChatScreen({super.key, required this.selectedModel});
-
-  Widget loadingWidget() {
-    return Center(
-      child: Platform.isAndroid
-          ? const CircularProgressIndicator()
-          : const CupertinoActivityIndicator(),
-    );
-  }
+  final String conversationId;
+  const ChatScreen(
+      {super.key, required this.selectedModel, required this.conversationId});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Chat with AI"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/');
-          },
+    return BlocProvider(
+      create: (_) => ChatBloc()
+        ..add(GetConversationEvent(selectedModel, conversationId)),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Chat with AI"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              context.go('/');
+            },
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        child: Column(
-          children: [
-            Expanded(
-              child: BlocBuilder<ChatBloc, ChatState>(
-                builder: (context, state) {
-                  if (state is ChatLoading && state.chatHistory.isEmpty) {
-                    return loadingWidget();
-                  }
-
-                  return ListView.builder(
-                    reverse: false, // Ensures messages start from the top
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: state.chatHistory.length,
-                    itemBuilder: (context, index) {
-                      final message = state.chatHistory[index];
-                      return Align(
-                        alignment: message.isUser
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.of(context).size.width * 0.7),
-                          margin: const EdgeInsets.symmetric(vertical: 4.0),
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            color: message.isUser
-                                ? primaryColor.withOpacity(0.5)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (!message.isUser)
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  child: Text(
-                                    selectedModel,
-                                    style: const TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 14,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Column(
+            children: [
+              Expanded(
+                child: BlocBuilder<ChatBloc, ChatState>(
+                  builder: (context, state) {
+                    if (state is ChatLoading && state.chatHistory.isEmpty) {
+                      return loadingWidget();
+                    }
+                    return ListView.builder(
+                      reverse: false, // Ensures messages start from the top
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      itemCount: state.chatHistory.length,
+                      itemBuilder: (context, index) {
+                        final message = state.chatHistory[index];
+                        return Align(
+                          alignment: message.isUser
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Container(
+                            constraints: BoxConstraints(
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.7),
+                            margin: const EdgeInsets.symmetric(vertical: 4.0),
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: message.isUser
+                                  ? primaryColor.withOpacity(0.5)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (!message.isUser)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: Text(
+                                      selectedModel,
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              if (message.isUser)
-                                Text(
-                                  message.content,
-                                  style: const TextStyle(
-                                    color: Colors.black,
+                                if (message.isUser)
+                                  Text(
+                                    message.content,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  )
+                                else
+                                  MarkdownBody(
+                                    data: message.content,
+                                    styleSheet: MarkdownStyleSheet(
+                                      p: const TextStyle(
+                                          color: Color(0xFF720F5E)),
+                                    ),
                                   ),
-                                )
-                              else
-                                MarkdownBody(
-                                  data: message.content,
-                                  styleSheet: MarkdownStyleSheet(
-                                    p: const TextStyle(
-                                        color: Color(0xFF720F5E)),
-                                  ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
 
-            // AIChatInput fixed at the bottom
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0),
-              child: AIChatInput(),
-            ),
-          ],
+              // AIChatInput fixed at the bottom
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: AIChatInput(),
+              ),
+            ],
+          ),
         ),
       ),
     );
