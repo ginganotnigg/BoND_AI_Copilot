@@ -12,14 +12,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(ChatLoading(chatHistory));
       final chatApi = ChatApi();
       try {
-        String response = await chatApi.responseFromAI(ev.message, ev.modelId);
-        chatHistory.add(ChatMessage(response, isUser: false));
+        String message = await chatApi.responseFromAI(ev.message, ev.modelId);
+        // String message = response['message'];
+        // int remaining = response['remainingUsage'];
+        chatHistory.add(ChatMessage(message, isUser: false));
         emit(ChatResponseReceived(chatHistory));
       } catch (e) {
         emit(ChatError(chatHistory, e.toString()));
       }
     });
     on<GetConversationEvent>((ev, emit) async {
+      if (ev.convId.isEmpty) {
+        return;
+      }
       emit(const ChatLoading([]));
       final chatApi = ChatApi();
       try {

@@ -38,7 +38,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
         final selectedModel = extra['model'] as String;
-        final conversationId = extra['conversationId'] as String;
+        final conversationId = extra['conversationId'] as String?;
         return ChatScreen(
           selectedModel: selectedModel,
           conversationId: conversationId,

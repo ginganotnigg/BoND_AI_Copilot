@@ -34,9 +34,9 @@ const String refreshToken =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMzgyYTZkLTMwYmItNGQ1Zi05YzVlLWU5NjlhNWFkYjcyMSIsImVtYWlsIjoicGhhbWNvbmdiYW5nMDNAZ21haWwuY29tIiwiaWF0IjoxNzMyMTIwNzY2LCJleHAiOjE3NjM2NTY3NjZ9.Rl3CvHYxmH-Reuy1GCejlTQcw3O8jDAALV9uAtOSymI";
 
 // URLs
-const String baseUrl = 'https://api.dev.jarvis.cx/api';
-const String aiChatUrl = '$baseUrl/v1/ai-chat';
-const String allConversationsUrl = '$aiChatUrl/conversations';
+const String baseUrl = 'https://api.jarvis.cx/api';
+const String aiChatUrl = '$baseUrl/v1/ai-chat/messages';
+const String allConversationsUrl = '$baseUrl/v1/ai-chat/conversations';
 const String loginUrl = '$baseUrl/v1/auth/login';
 const String signUpUrl = '$baseUrl/v1/auth/signup';
 const String promptUrl = '$baseUrl/v1/prompts';

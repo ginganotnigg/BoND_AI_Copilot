@@ -127,14 +127,16 @@ void showPromptDialog(BuildContext context, String promptTitle) {
   );
 }
 
-Widget footer(BuildContext context) {
+Widget footer(BuildContext context, int remainingTokens) {
   return Container(
     padding: const EdgeInsets.all(8.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        buildIconWithText(Icons.bolt, "30"),
+        buildIconWithText(Icons.bolt, remainingTokens.toString()),
+        const SizedBox(width: 10),
         buildIconWithText(Icons.rocket, "Upgrade"),
+        const SizedBox(width: 10),
         IconButton(
           color: secondaryColor,
           icon: const Icon(Icons.star_border),

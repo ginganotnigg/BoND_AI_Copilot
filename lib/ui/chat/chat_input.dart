@@ -10,7 +10,8 @@ import 'package:bond/bloc/chat_bloc/chat_event.dart';
 import 'package:go_router/go_router.dart';
 
 class AIChatInput extends StatefulWidget {
-  const AIChatInput({super.key});
+  final int remainingTokens;
+  const AIChatInput({super.key, required this.remainingTokens});
 
   @override
   State<AIChatInput> createState() => _AIChatInputState();
@@ -29,7 +30,8 @@ class _AIChatInputState extends State<AIChatInput> {
   void sendMessageToChat(BuildContext context, String message) {
     context.read<ChatBloc>().add(SendMessageEvent(message, selectedModel));
     if (GoRouterState.of(context).uri.toString() != '/ai-chat') {
-      context.go('/ai-chat', extra: selectedModel);
+      context.go('/ai-chat',
+          extra: {'model': selectedModel, 'conversationId': null});
     }
   }
 
@@ -211,7 +213,7 @@ class _AIChatInputState extends State<AIChatInput> {
             ],
           ),
         ),
-        footer(context),
+        footer(context, widget.remainingTokens),
       ],
     );
   }

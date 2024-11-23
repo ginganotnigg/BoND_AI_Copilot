@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'package:bond/models/ai_model.dart';
 import 'package:bond/global.dart';
 import 'package:bond/models/chat_message.dart';
 import 'package:bond/models/conversation.dart';
 import 'package:http/http.dart' as http;
+
+
 
 class ChatApi {
   Future<String> responseFromAI(String message, String modelId) async {
@@ -13,18 +16,34 @@ class ChatApi {
       'Content-Type': 'application/json',
     };
     final body = jsonEncode({
-      'assistant': {
-        'id': modelId.toLowerCase().replaceAll(' ', '-'),
-        'model': 'dify',
-      },
+      // 'assistant': {
+      //   'id': modelId.toLowerCase().replaceAll(' ', '-'),
+      //   'model': 'dify',
+      // },
+      // 'content': message,
       'content': message,
+      'metadata': {
+        'conversation': {'messages': []}
+      },
+      'assistant': {
+        'id': getId(modelId),
+        'model': 'dify',
+        'name': modelId
+      }
     });
 
     try {
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
-        return jsonDecode(response.body)['message'];
+        final responseData = jsonDecode(response.body);
+        return responseData['message'];
+        // return {
+        //   'message': responseData['message'],
+        //   'remainingUsage': responseData['remainingUsage'],
+        // };
       } else {
+        print('Error response status: ${response.statusCode}');
+        print('Error response body: ${response.body}');
         throw Exception('Failed to get response from AI');
       }
     } catch (e) {
@@ -67,7 +86,8 @@ class ChatApi {
       'assistantId': lowercaseModel,
       'assistantModel': 'dify',
     };
-    final url = Uri.parse('$allConversationsUrl/$convId/messages/').replace(queryParameters: params);
+    final url = Uri.parse('$allConversationsUrl/$convId/messages/')
+        .replace(queryParameters: params);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
       'Authorization': 'Bearer $jarvisToken',
@@ -81,7 +101,8 @@ class ChatApi {
         List<ChatMessage> messages = [];
         for (var item in data) {
           messages.add(ChatMessage.fromJson({'content': item['query']}, true));
-          messages.add(ChatMessage.fromJson({'content': item['answer']}, false));
+          messages
+              .add(ChatMessage.fromJson({'content': item['answer']}, false));
         }
         return messages;
       } else {

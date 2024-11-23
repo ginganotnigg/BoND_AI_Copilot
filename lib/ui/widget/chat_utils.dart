@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bond/global.dart';
+import 'package:bond/models/ai_model.dart';
 import 'package:bond/ui/chat/ai_dropdown.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

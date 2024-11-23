@@ -1,13 +1,7 @@
+import 'package:bond/models/ai_model.dart';
 import 'package:bond/ui/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
-class AIModel {
-  final String name;
-  final String imagePath;
-
-  AIModel(this.name, this.imagePath);
-}
 
 class AIModelDropdown extends StatefulWidget {
   final String selectedModel;

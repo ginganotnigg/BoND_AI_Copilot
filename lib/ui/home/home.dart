@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             buildListTile(context, "Learn Code FAST!"),
             buildListTile(context, "Story generator"),
             const Spacer(),
-            const AIChatInput(),
+            const AIChatInput(remainingTokens: 50),
           ],
         ),
       ),
