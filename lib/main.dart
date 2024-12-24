@@ -1,11 +1,11 @@
-import 'package:bond/bloc/chat_bloc/chat_bloc.dart';
-import 'package:bond/bloc/prompt_bloc/prompt_bloc.dart';
-import 'package:bond/routes.dart';
-import 'package:bond/services/prompt_api.dart';
+import 'package:bond/features/chat/bloc/chat_bloc/chat_bloc.dart';
+import 'package:bond/features/prompt/bloc/prompt_bloc.dart';
+import 'package:bond/config/routes.dart';
+import 'package:bond/features/prompt/service/prompt_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/auth_bloc/auth_bloc.dart';
+import 'features/auth/bloc/auth_bloc.dart';
 
 void main() {
   runApp(

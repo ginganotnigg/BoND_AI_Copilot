@@ -1,0 +1,220 @@
+import 'package:bond/shared/styles/styles.dart';
+import 'package:bond/features/chat/ui/ai_dropdown.dart';
+import 'package:bond/shared/widget/home_utils.dart';
+import 'package:bond/features/prompt/ui/prompt_list.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bond/features/chat/bloc/chat_bloc/chat_bloc.dart';
+import 'package:bond/features/chat/bloc/conv_bloc/conv_bloc.dart';
+import 'package:bond/features/chat/bloc/chat_bloc/chat_event.dart';
+import 'package:go_router/go_router.dart';
+
+class AIChatInput extends StatefulWidget {
+  final int remainingTokens;
+  final String selectedModel;
+  final ValueChanged<String> onModelChanged;
+  const AIChatInput({super.key, required this.remainingTokens, required this.selectedModel, required this.onModelChanged});
+
+  @override
+  State<AIChatInput> createState() => _AIChatInputState();
+}
+
+class _AIChatInputState extends State<AIChatInput> {
+  final TextEditingController _controller = TextEditingController();
+
+
+  void updateModel(String model) {
+    context.read<ChatBloc>().add(UpdateModelEvent(model));
+  }
+
+  void sendMessageToChat(BuildContext context, String message) {
+    context.read<ChatBloc>().add(SendMessageEvent(message, widget.selectedModel));
+    if (GoRouterState.of(context).uri.toString() != '/ai-chat') {
+      context.go('/ai-chat',
+          extra: {'model': widget.selectedModel, 'conversationId': null});
+    }
+  }
+
+  void showConversationHistory(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16.0),
+        ),
+      ),
+      builder: (context) {
+        return BlocProvider(
+          create: (_) => ConvBloc()..add(FetchConversations(widget.selectedModel)),
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              top: 16.0,
+            ),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.75,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon:
+                            const Icon(Icons.close, color: Colors.transparent),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        "Chat History",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close, color: primaryColor),
+                      ),
+                    ],
+                  ),
+                  BlocBuilder<ConvBloc, ConvState>(
+                    builder: (context, state) {
+                      if (state is ConvLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is ConvLoaded) {
+                        return Expanded(
+                          child: ListView.separated(
+                            itemCount: state.convs.length,
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemBuilder: (context, index) {
+                              final conversation = state.convs[index];
+                              return ListTile(
+                                title: Text(
+                                  conversation.title,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                    formatTimestamp(conversation.createdAt)),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog
+                                  context.go(
+                                    '/ai-chat',
+                                    extra: {
+                                      'model': widget.selectedModel,
+                                      'conversationId': conversation.id,
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      } else if (state is ConvError) {
+                        return Center(child: Text(state.message));
+                      }
+                      return Container();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String formatTimestamp(int timestampInSeconds) {
+    DateTime conversationDateTime =
+        DateTime.fromMillisecondsSinceEpoch(timestampInSeconds * 1000);
+    DateTime now = DateTime.now();
+    Duration difference = now.difference(conversationDateTime);
+    return formatDuration(difference);
+  }
+
+  String formatDuration(Duration duration) {
+    StringBuffer buffer = StringBuffer();
+
+    if (duration.inDays > 365) {
+      int years = duration.inDays ~/ 365;
+      buffer.write('$years year${years > 1 ? 's' : ''} ago');
+    } else if (duration.inDays > 30) {
+      int months = duration.inDays ~/ 30;
+      buffer.write('$months month${months > 1 ? 's' : ''} ago');
+    } else if (duration.inDays > 0) {
+      buffer
+          .write('${duration.inDays} day${duration.inDays > 1 ? 's' : ''} ago');
+    } else if (duration.inHours > 0) {
+      buffer.write(
+          '${duration.inHours} hour${duration.inHours > 1 ? 's' : ''} ago');
+    } else if (duration.inMinutes > 0) {
+      buffer.write(
+          '${duration.inMinutes} minute${duration.inMinutes > 1 ? 's' : ''} ago');
+    } else {
+      buffer.write(
+          '${duration.inSeconds} second${duration.inSeconds > 1 ? 's' : ''} ago');
+    }
+
+    return buffer.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            AIModelDropdown(
+              selectedModel: widget.selectedModel,
+              onModelSelected: widget.onModelChanged,
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: () => showConversationHistory(context),
+              icon: const Icon(Icons.history, color: primaryColor),
+            ),
+          ],
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.generating_tokens, color: primaryColor),
+                onPressed: () => showPromptManagementDialog(context),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    hintText: "Ask me anything...",
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.send, color: primaryColor),
+                onPressed: () {
+                  final message = _controller.text.trim();
+                  if (message.isNotEmpty) {
+                    sendMessageToChat(context, message);
+                    _controller.clear();
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+        footer(context, widget.remainingTokens),
+      ],
+    );
+  }
+}
