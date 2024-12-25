@@ -1,7 +1,6 @@
 import 'package:bond/bloc/chat_bloc/chat_bloc.dart';
 import 'package:bond/bloc/prompt_bloc/prompt_bloc.dart';
 import 'package:bond/routes.dart';
-import 'package:bond/services/prompt_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +12,7 @@ void main() {
       providers: [
         BlocProvider(create: (_) => ChatBloc()),
         BlocProvider(create: (_) => AuthBloc()),
-        BlocProvider(create: (_) => PromptBloc(PromptApi())),
+        BlocProvider(create: (_) => PromptBloc()),
       ],
       child: const BondAI(),
     ),

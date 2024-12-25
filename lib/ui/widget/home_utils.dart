@@ -1,5 +1,10 @@
+import 'package:bond/bloc/chat_bloc/chat_bloc.dart';
+import 'package:bond/bloc/chat_bloc/chat_event.dart';
+import 'package:bond/models/prompt.dart';
 import 'package:flutter/material.dart';
 import 'package:bond/global.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 Widget buildIconWithText(IconData icon, String text) {
   return Column(
@@ -16,12 +21,33 @@ Widget buildListTile(BuildContext context, String text) {
     title: Text(text, style: const TextStyle(color: secondaryColor)),
     trailing: const Icon(Icons.arrow_forward, color: secondaryColor),
     onTap: () {
-      showPromptDialog(context, text);
+      // showPromptDialog(context, text);
     },
   );
 }
 
-void showPromptDialog(BuildContext context, String promptTitle) {
+void showPromptDialog(BuildContext context, Prompt prompt) {
+  TextEditingController promptContentController = TextEditingController();
+  List<TextEditingController> inputControllers =
+      []; // List for dynamic TextFields
+  List<String> inputHints = []; // List to store input hints for each field
+
+  // Extract inputs (the parts inside [])
+  RegExp regExp = RegExp(r'\[([^\]]+)\]');
+  Iterable<Match> matches = regExp.allMatches(prompt.content);
+
+  // Clear existing controllers and inputs
+  inputControllers.clear();
+  inputHints.clear();
+
+  for (var match in matches) {
+    String inputHint = match.group(1) ?? ''; // Extract the hint (e.g., "Topic")
+    inputHints.add(inputHint);
+    inputControllers.add(TextEditingController());
+  }
+
+  promptContentController.text = prompt.content;
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -45,7 +71,7 @@ void showPromptDialog(BuildContext context, String promptTitle) {
                   ),
                   Expanded(
                     child: Text(
-                      promptTitle,
+                      prompt.title,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -61,18 +87,28 @@ void showPromptDialog(BuildContext context, String promptTitle) {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text("Coding · Jarvis AI Team",
-                  style: TextStyle(fontSize: 16)),
+              Text(
+                '${capitalize(prompt.category.name)} · ${capitalize(prompt.userName ?? 'AI Jarvis Team')}',
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 4),
               Text(
-                "Teach you the code with the most understandable knowledge.",
+                prompt.description,
                 style: TextStyle(color: Colors.grey[600]),
               ),
               const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {},
-                child: const Text("View Prompt",
-                    style: TextStyle(color: Colors.blue)),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: TextField(
+                  controller: promptContentController,
+                  maxLines: 3,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Prompt Content',
+                  ),
+                ),
               ),
               const SizedBox(height: 10),
               Row(
@@ -98,19 +134,40 @@ void showPromptDialog(BuildContext context, String promptTitle) {
                 ],
               ),
               const SizedBox(height: 10),
-              TextField(
-                maxLines: 4,
-                decoration: InputDecoration(
-                  hintText: "A code snippet or a problem",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+              // Display dynamic input fields for each extracted input
+              ...List.generate(inputControllers.length, (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: TextField(
+                    controller: inputControllers[index],
+                    decoration: InputDecoration(
+                      labelText: 'Enter ${inputHints[index]}',
+                      border: const OutlineInputBorder(),
+                    ),
                   ),
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // Placeholder action for sending
+                  // Replace placeholders in prompt.content with user inputs
+                  String updatedPrompt = prompt.content;
+                  for (int i = 0; i < inputControllers.length; i++) {
+                    updatedPrompt = updatedPrompt.replaceFirst(
+                      RegExp(r'\[([^\]]+)\]'),
+                      inputControllers[i].text.isNotEmpty
+                          ? inputControllers[i].text
+                          : inputHints[i],
+                    );
+                  }
+
+                  context
+                      .read<ChatBloc>()
+                      .add(SendMessageEvent(updatedPrompt, 'GPT-4o mini'));
+                  // if (GoRouterState.of(context).uri.toString() != '/ai-chat') {
+                  context.go('/ai-chat',
+                      extra: {'model': 'GPT-4o mini', 'conversationId': null});
+                  // }
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -177,4 +234,9 @@ Widget footer(BuildContext context, int remainingTokens) {
       ],
     ),
   );
+}
+
+String capitalize(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1);
 }

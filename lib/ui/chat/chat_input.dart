@@ -1,3 +1,6 @@
+import 'package:bond/bloc/prompt_bloc/prompt_bloc.dart';
+import 'package:bond/bloc/prompt_bloc/prompt_event.dart';
+import 'package:bond/bloc/prompt_bloc/prompt_state.dart';
 import 'package:bond/global.dart';
 import 'package:bond/ui/chat/ai_dropdown.dart';
 import 'package:bond/ui/widget/home_utils.dart';
@@ -127,6 +130,96 @@ class _AIChatInputState extends State<AIChatInput> {
     );
   }
 
+  void showPromptList(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16.0),
+        ),
+      ),
+      builder: (context) {
+        return BlocProvider(
+          create: (_) => PromptBloc()
+            ..add(const LoadPromptsEvent(
+              isPublic: true,
+              isFavorite: false,
+              limit: 20,
+              offset: 0,
+            )),
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              top: 16.0,
+            ),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.75,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon:
+                            const Icon(Icons.close, color: Colors.transparent),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        "Prompts",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close, color: primaryColor),
+                      ),
+                    ],
+                  ),
+                  BlocBuilder<PromptBloc, PromptState>(
+                    builder: (context, state) {
+                      if (state is PromptLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is PromptLoaded) {
+                        return Expanded(
+                          child: ListView.separated(
+                            itemCount: state.prompts.length,
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemBuilder: (context, index) {
+                              final prompt = state.prompts[index];
+                              return ListTile(
+                                title: Text(
+                                  prompt.title,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(prompt.content),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  showPromptDialog(context, prompt);
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      } else if (state is PromptError) {
+                        return Center(child: Text(state.error));
+                      }
+                      return Container();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   String formatTimestamp(int timestampInSeconds) {
     DateTime conversationDateTime =
         DateTime.fromMillisecondsSinceEpoch(timestampInSeconds * 1000);
@@ -195,9 +288,12 @@ class _AIChatInputState extends State<AIChatInput> {
                   controller: _controller,
                   maxLines: 3,
                   decoration: const InputDecoration(
-                    hintText: "Ask me anything...",
+                    hintText: "Ask me anything or press '/' for prompts ...",
                     border: InputBorder.none,
                   ),
+                  onChanged: (value) => {
+                    if (value == '/') {showPromptList(context)}
+                  },
                 ),
               ),
               IconButton(

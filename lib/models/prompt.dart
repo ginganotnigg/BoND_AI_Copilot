@@ -21,17 +21,18 @@ class Prompt {
   bool? isFavorite;
   String language;
   String title;
+  String? userName;
 
-  Prompt({
-    this.id,
-    required this.category,
-    required this.content,
-    required this.description,
-    required this.isPublic,
-    this.isFavorite,
-    required this.language,
-    required this.title,
-  });
+  Prompt(
+      {this.id,
+      required this.category,
+      required this.content,
+      required this.description,
+      required this.isPublic,
+      this.isFavorite,
+      required this.language,
+      required this.title,
+      this.userName});
 
   Map<String, dynamic> toJson() {
     return {
@@ -59,6 +60,7 @@ class Prompt {
       isFavorite: jsonDecode['isFavorite'] ?? false,
       language: jsonDecode['language'] ?? "en",
       title: jsonDecode['title'] ?? "",
+      userName: jsonDecode['userName'] ?? "",
     );
   }
 
