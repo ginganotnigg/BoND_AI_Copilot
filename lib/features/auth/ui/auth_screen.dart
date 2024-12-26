@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // Still import if using Bloc for events
 
+import '../../../shared/helpers/auth_helper.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../bloc/auth_event.dart';
@@ -28,6 +29,21 @@ class _AuthScreenState extends State<AuthScreen> {
   String? _retypeError;
 
   bool isLogin = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoggedInStatus();
+  }
+
+  Future<void> _checkLoggedInStatus() async {
+    final isLoggedIn = await AuthHelper.getLoggedInStatus() ?? false;
+    if (isLoggedIn) {
+      if (mounted) {
+        context.go('/');
+      }
+    }
+  }
 
   bool _isStrongPassword(String password) {
     final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$');
@@ -142,7 +158,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               const Row(
                 children: [
                   Expanded(
@@ -209,13 +225,16 @@ class _AuthScreenState extends State<AuthScreen> {
               BlocConsumer<AuthBloc, AuthState> (
                   listener: ((context, state) {
                     if (state is Authenticated) {
-                      context.go('/assistant');
+                      context.go('/');
                     } else if (state is Unauthenticated) {
                       if (state.message == 'success') {
                         context.go('/login');
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Signed Up Successfully")));
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("Signed Up Successfully")));
                       }
-                      else ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+                      }
                     }
                     else if (state is AuthError) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
@@ -261,7 +280,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                         ),
                       );
-                    } else return Container();
+                    } else {
+                      return Container();
+                    }
                   })
               ),
               const SizedBox(height: 20),

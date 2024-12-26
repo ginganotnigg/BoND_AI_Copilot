@@ -12,7 +12,7 @@ class SignUpRequested extends AuthEvent {
   final String password;
   final String username;
 
-  SignUpRequested(this.email, this.password, this.username);
+  const SignUpRequested(this.email, this.password, this.username);
 
   @override
   List<Object> get props => [email, password, username];
@@ -22,10 +22,24 @@ class SignInRequested extends AuthEvent {
   final String email;
   final String password;
 
-  SignInRequested(this.email, this.password);
+  const SignInRequested(this.email, this.password);
 
   @override
   List<Object> get props => [email, password];
 }
 
-class SignOutRequested extends AuthEvent {}
+class RefreshTokenRequested extends AuthEvent {
+
+  final String refreshToken;
+
+  const RefreshTokenRequested(this.refreshToken);
+
+  @override
+  List<Object> get props => [refreshToken];
+}
+
+class SignOutRequested extends AuthEvent {
+  const SignOutRequested();
+  @override
+  List<Object> get props => [];
+}
