@@ -94,7 +94,8 @@ class AuthApi {
     }
   }
 
-  Future<void> refreshToken(String refreshToken) async {
+  Future<void> refreshToken() async {
+    String refreshToken = await AuthHelper.getRefreshToken() ?? '';
     final url = Uri.parse(refreshTokenUrl);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
