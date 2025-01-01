@@ -6,17 +6,26 @@ import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(ChatInitial()) {
+    on<InitializeChatEvent>((event, emit) async {
+      final chatApi = ChatApi();
+      try {
+        emit(ChatLoading(state.chatHistory));
+        final remainingTokens = await chatApi.getInitialTokens();
+        emit(ChatResponseReceived(const [], remainingTokens: remainingTokens));
+      } catch (e) {
+        emit(ChatError(state.chatHistory, e.toString()));
+      }
+    });
     on<SendMessageEvent>((ev, emit) async {
-      final chatHistory = state.chatHistory;
+      final chatHistory = List<ChatMessage>.from(state.chatHistory);
       chatHistory.add(ChatMessage(ev.message, isUser: true));
       emit(ChatLoading(chatHistory));
       final chatApi = ChatApi();
       try {
-        String message = await chatApi.responseFromAI(ev.message, ev.modelId);
-        // String message = response['message'];
-        // int remaining = response['remainingUsage'];
-        chatHistory.add(ChatMessage(message, isUser: false));
-        emit(ChatResponseReceived(chatHistory));
+        final response = await chatApi.responseFromAI(ev.message, ev.modelId);
+        chatHistory.add(ChatMessage(response.message, isUser: false));
+        emit(ChatResponseReceived(chatHistory,
+            remainingTokens: response.remainingTokens));
       } catch (e) {
         emit(ChatError(chatHistory, e.toString()));
       }

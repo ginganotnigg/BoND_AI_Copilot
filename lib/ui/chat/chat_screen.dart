@@ -1,4 +1,3 @@
-import 'package:bond/bloc/conv_bloc/conv_bloc.dart';
 import 'package:bond/global.dart';
 import 'package:bond/ui/chat/chat_input.dart';
 import 'package:bond/ui/widget/chat_utils.dart';
@@ -17,7 +16,6 @@ class ChatScreen extends StatelessWidget {
       {super.key, required this.selectedModel, this.conversationId});
 
   Widget buildScaffold(BuildContext context) {
-    int? remainingTokens;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Chat with AI"),
@@ -106,9 +104,9 @@ class ChatScreen extends StatelessWidget {
             ),
 
             // AIChatInput fixed at the bottom
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: AIChatInput(remainingTokens: remainingTokens ?? 50),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.0),
+              child: AIChatInput(),
             ),
           ],
         ),

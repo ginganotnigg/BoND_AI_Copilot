@@ -1,6 +1,8 @@
 import 'package:bond/global.dart';
+import 'package:bond/services/subscribe_api.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PricingScreen extends StatelessWidget {
   const PricingScreen({super.key});
@@ -197,7 +199,13 @@ class SubscriptionCard extends StatelessWidget {
             const SizedBox(height: 16),
             if (title != 'Basic') ...[
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (title == 'Starter') {
+                    handleSubscriptionClick('starter', 'monthly');
+                  } else {
+                    handleSubscriptionClick('starter', 'annually');
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: _getButtonColor(title),
@@ -239,6 +247,31 @@ class SubscriptionCard extends StatelessWidget {
         return Colors.orange;
       default:
         return Colors.black;
+    }
+  }
+
+  // This function handles subscription button click
+  void handleSubscriptionClick(String plan, String period) async {
+    try {
+      // Call the API to get the checkout URL
+      String checkoutUrl = await SubscribeApi().subribePlan(plan, period);
+      print(checkoutUrl);
+      // If checkoutUrl is not empty, navigate to the URL in a web view or browser
+      if (checkoutUrl.isNotEmpty) {
+        // You can use url_launcher or a webview package to navigate to the URL
+        final Uri url = Uri.parse(checkoutUrl);
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        } else {
+          throw Exception("Could not launch the URL");
+        }
+      } else {
+        // Handle the case where the API does not return a valid URL
+        print("Error: The API did not return a valid checkout URL");
+      }
+    } catch (error) {
+      // Handle errors gracefully
+      print("An error occurred: $error");
     }
   }
 }

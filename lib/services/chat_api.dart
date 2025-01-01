@@ -5,10 +5,28 @@ import 'package:bond/models/chat_message.dart';
 import 'package:bond/models/conversation.dart';
 import 'package:http/http.dart' as http;
 
+class ChatApiResponse {
+  final String message;
+  final int remainingTokens;
 
+  ChatApiResponse(this.message, this.remainingTokens);
+}
 
 class ChatApi {
-  Future<String> responseFromAI(String message, String modelId) async {
+  Future<int> getInitialTokens() async {
+    final url = Uri.parse('$baseUrl/v1/tokens/usage');
+    final headers = {
+      'x-jarvis-guid': jarvisGuid,
+      'Authorization': 'Bearer $jarvisToken',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(url, headers: headers);
+    final data = jsonDecode(response.body);
+    return data['availableTokens'] ?? 0;
+  }
+
+  Future<ChatApiResponse> responseFromAI(String message, String modelId) async {
     final url = Uri.parse(aiChatUrl);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
@@ -25,22 +43,15 @@ class ChatApi {
       'metadata': {
         'conversation': {'messages': []}
       },
-      'assistant': {
-        'id': getId(modelId),
-        'model': 'dify',
-        'name': modelId
-      }
+      'assistant': {'id': getId(modelId), 'model': 'dify', 'name': modelId}
     });
 
     try {
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        return responseData['message'];
-        // return {
-        //   'message': responseData['message'],
-        //   'remainingUsage': responseData['remainingUsage'],
-        // };
+        return ChatApiResponse(
+            responseData['message'], responseData['remainingUsage']);
       } else {
         print('Error response status: ${response.statusCode}');
         print('Error response body: ${response.body}');

@@ -190,9 +190,42 @@ Widget footer(BuildContext context, int remainingTokens) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        buildIconWithText(Icons.bolt, remainingTokens.toString()),
+        if (remainingTokens == -1)
+          const SizedBox(
+            width: 20.0,
+            height: 20.0,
+            child: CircularProgressIndicator(
+              strokeWidth: 3.0,
+              valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
+            ),
+          ),
+        if (remainingTokens != -1)
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                color: secondaryColor,
+                icon: const Icon(Icons.bolt),
+                onPressed: () {},
+              ),
+              Text(remainingTokens.toString(),
+                  style: const TextStyle(color: secondaryColor)),
+            ],
+          ),
         const SizedBox(width: 10),
-        buildIconWithText(Icons.rocket, "Upgrade"),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              color: secondaryColor,
+              icon: const Icon(Icons.rocket),
+              onPressed: () {
+                context.go('/pricing-plan');
+              },
+            ),
+            const Text('Upgrade', style: TextStyle(color: secondaryColor)),
+          ],
+        ),
         const SizedBox(width: 10),
         IconButton(
           color: secondaryColor,
