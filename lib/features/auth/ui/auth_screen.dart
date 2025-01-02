@@ -227,10 +227,10 @@ class _AuthScreenState extends State<AuthScreen> {
                     if (state is Authenticated) {
                       context.go('/');
                     } else if (state is Unauthenticated) {
-                      if (state.message == 'success') {
+                      if (state.status == true) {
                         context.go('/login');
                         ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text("Signed Up Successfully")));
+                            .showSnackBar(SnackBar(content: Text(state.message)));
                       }
                       else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
@@ -242,7 +242,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   }),
                   builder: ((context, state) {
                     if (state is Loading) {
-                      return Container();
+                      return const Center(
+                        child: CircularProgressIndicator()
+                      );
                     } else if (state is Unauthenticated) {
                       return SizedBox(
                         width: double.infinity,
@@ -258,7 +260,6 @@ class _AuthScreenState extends State<AuthScreen> {
                               );
                             }
                             else if (_usernameError == null && _emailError == null && _passwordError == null && _retypeError == null) {
-                              // Proceed with login or registration
                                {
                                 context.read<AuthBloc>().add(
                                   SignUpRequested(

@@ -1,6 +1,6 @@
 import 'package:bond/features/auth/ui/auth_screen.dart';
 import 'package:bond/features/auth/ui/pricing_screen.dart';
-import 'package:bond/features/chat/ui/assistant_screen.dart';
+import 'package:bond/features/bot/ui/assistant_screen.dart';
 import 'package:bond/features/chat/ui/chat_screen.dart';
 import 'package:bond/features/knowledge_base/ui/create_bot.dart';
 import 'package:go_router/go_router.dart';

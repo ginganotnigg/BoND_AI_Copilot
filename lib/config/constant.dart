@@ -8,10 +8,11 @@ const String refreshToken =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMzgyYTZkLTMwYmItNGQ1Zi05YzVlLWU5NjlhNWFkYjcyMSIsImVtYWlsIjoicGhhbWNvbmdiYW5nMDNAZ21haWwuY29tIiwiaWF0IjoxNzMyMTIwNzY2LCJleHAiOjE3NjM2NTY3NjZ9.Rl3CvHYxmH-Reuy1GCejlTQcw3O8jDAALV9uAtOSymI";
 
 // URLs
-const String baseUrl = 'https://api.dev.jarvis.cx/api';
+const String baseUrl = 'https://api.jarvis.cx/api';
 const String aiChatUrl = '$baseUrl/v1/ai-chat/messages';
 const String allConversationsUrl = '$baseUrl/v1/ai-chat/conversations';
 //auth
+const String getUserUrl = '$baseUrl/v1/auth/me';
 const String loginUrl = '$baseUrl/v1/auth/sign-in';
 const String signUpUrl = '$baseUrl/v1/auth/sign-up';
 const String signOutUrl = '$baseUrl/v1/auth/sign-out';
@@ -19,4 +20,9 @@ const String refreshTokenUrl = '$baseUrl/v1/auth/refresh';
 
 const String promptUrl = '$baseUrl/v1/prompts';
 
-const String knowledgeUrl = 'https://knowledge-api.jarvis.cx';
+const String knowledgeUrl = 'https://knowledge-api.jarvis.cx/kb-core';
+
+const String loginKBUrl = '$knowledgeUrl/v1/auth/external-sign-in';
+const String refreshTokenKBUrl = '$knowledgeUrl/v1/auth/refresh';
+const String botUrl = '$knowledgeUrl/v1/ai-assistant';
+//
