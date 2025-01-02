@@ -7,15 +7,16 @@ import 'package:bond/features/chat/models/conversation.dart';
 import 'package:http/http.dart' as http;
 
 class ChatApi {
+  final headers = {
+    'x-jarvis-guid': jarvisGuid,
+    'Authorization': 'Bearer $jarvisToken',
+    'Content-Type': 'application/json',
+  };
+
   Future<String> responseFromAI(ConvParams convParams) async {
     final url = Uri.parse(aiChatUrl);
     final model = convParams.modelName;
     final convId = convParams.conversationId;
-    final headers = {
-      'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
-      'Content-Type': 'application/json',
-    };
     final chats = convParams.messages;
     final lastMessage = chats.last.content;
     Map<String, dynamic> metadata = {};
@@ -23,10 +24,7 @@ class ChatApi {
       metadata = {
         'conversation': {
           'id': convId,
-          'messages': chats
-              .take(chats.length - 1)
-              .map((message) => message.toJson())
-              .toList(),
+          'messages': null,
         }
       };
     }
@@ -87,6 +85,11 @@ class ChatApi {
     }
   }
 
+  Future<String> getLatestConversations(String model) async {
+    final conversations = await getConversations(model);
+    return conversations.first.id;
+  }
+
   Future<List<ChatMessage>> getConvMessages(String model, String convId) async {
     final String lowercaseModel = model.toLowerCase().replaceAll(' ', '-');
     Map<String, dynamic> params = {
@@ -110,11 +113,13 @@ class ChatApi {
           return [
             ChatMessage(
               content: item['query'] as String,
-              aiModel: '',
-              files: (item['files'] as List<dynamic>?)?.cast<String>() ?? [],
+              aiModel: model,
+              role: 'user',
+              files: (item['files'] as List<dynamic>?)?.cast<String>(),
             ),
             ChatMessage(
               content: item['answer'] as String,
+              role: 'model',
               aiModel: model,
             ),
           ];

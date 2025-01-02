@@ -8,6 +8,7 @@ class UnitLoading extends UnitState {}
 
 class UnitLoaded extends UnitState {
   final UnitList unitList;
+
   UnitLoaded(this.unitList);
 }
 

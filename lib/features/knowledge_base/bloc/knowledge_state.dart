@@ -20,10 +20,10 @@ class KnowledgeLoaded extends KnowledgeState {
 }
 
 class KnowledgeError extends KnowledgeState {
-  final String errorMessage;
+  final String error;
 
-  KnowledgeError(this.errorMessage);
+  KnowledgeError(this.error);
 
   @override
-  List<Object> get props => [errorMessage];
+  List<Object> get props => [error];
 }

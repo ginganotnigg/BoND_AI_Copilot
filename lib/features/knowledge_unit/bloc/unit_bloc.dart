@@ -9,7 +9,7 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
       emit(UnitLoading());
       final unitApi = UnitApi();
       try {
-        final unitList = await unitApi.getUnitList(ev.knowledgeId);
+        final unitList = await unitApi.getUnitList(ev.knowledge.id);
         emit(UnitLoaded(unitList));
       } catch (e) {
         emit(UnitError(e.toString()));
@@ -19,7 +19,8 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
     on<DeleteUnitEvent>((ev, emit) async {
       try {
         final unitApi = UnitApi();
-        await unitApi.deleteUnit(ev.knowledgeId, ev.unitId);
+        await unitApi.deleteUnit(ev.knowledge.id, ev.unitId);
+        add(GetUnitListEvent(ev.knowledge));
       } catch (e) {
         emit(UnitError(e.toString()));
       }
@@ -37,7 +38,8 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
     on<UploadLocalFileEvent>((ev, emit) async {
       try {
         final unitApi = UnitApi();
-        await unitApi.uploadLocalFile(ev.knowledgeId, ev.file);
+        await unitApi.uploadLocalFile(ev.knowledge.id, ev.file);
+        add(GetUnitListEvent(ev.knowledge));
       } catch (e) {
         emit(UnitError(e.toString()));
       }
@@ -46,7 +48,8 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
     on<UploadWebEvent>((ev, emit) async {
       try {
         final unitApi = UnitApi();
-        await unitApi.uploadWeb(ev.knowledgeId, ev.unitName, ev.webUrl);
+        await unitApi.uploadWeb(ev.knowledge.id, ev.unitName, ev.webUrl);
+        add(GetUnitListEvent(ev.knowledge));
       } catch (e) {
         emit(UnitError(e.toString()));
       }
@@ -56,7 +59,8 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
     on<UploadSlackEvent>((ev, emit) async {
       try {
         final unitApi = UnitApi();
-        await unitApi.uploadSlack(ev.knowledgeId, ev.unitName, ev.metadata);
+        await unitApi.uploadSlack(ev.knowledge.id, ev.unitName, ev.metadata);
+        add(GetUnitListEvent(ev.knowledge));
       } catch (e) {
         emit(UnitError(e.toString()));
       }
@@ -65,7 +69,8 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
     on<UploadDriveEvent>((ev, emit) async {
       try {
         final unitApi = UnitApi();
-        await unitApi.uploadDrive(ev.knowledgeId, ev.unitName, ev.metadata);
+        await unitApi.uploadDrive(ev.knowledge.id, ev.unitName, ev.metadata);
+        add(GetUnitListEvent(ev.knowledge));
       } catch (e) {
         emit(UnitError(e.toString()));
       }
@@ -74,7 +79,27 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
     on<UploadConfluenceEvent>((ev, emit) async {
       try {
         final unitApi = UnitApi();
-        await unitApi.uploadConfluence(ev.knowledgeId, ev.unitName, ev.metadata);
+        await unitApi.uploadConfluence(
+            ev.knowledge.id, ev.unitName, ev.metadata);
+        add(GetUnitListEvent(ev.knowledge));
+      } catch (e) {
+        emit(UnitError(e.toString()));
+      }
+    });
+
+    on<UpdateCurrentKnowledgeEvent>((ev, emit) async {
+      if (state is UnitLoaded) {
+        final unitList = (state as UnitLoaded).unitList;
+        emit(UnitLoaded(unitList));
+      }
+    });
+
+    on<SearchUnitEvent>((ev, emit) async {
+      emit(UnitLoading());
+      final unitApi = UnitApi();
+      try {
+        final unitList = await unitApi.searchUnit(ev.knowledge.id, ev.query);
+        emit(UnitLoaded(unitList));
       } catch (e) {
         emit(UnitError(e.toString()));
       }

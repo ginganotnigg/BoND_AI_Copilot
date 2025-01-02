@@ -1,25 +1,31 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:bond/config/constant.dart';
+import 'package:bond/features/knowledge_unit/models/file_metadata.dart';
+import 'package:bond/features/knowledge_unit/models/unit_list.dart';
 import 'package:bond/features/knowledge_unit/models/confluence_metadata.dart';
 import 'package:bond/features/knowledge_unit/models/drive_metadata.dart';
 import 'package:bond/features/knowledge_unit/models/slack_metadata.dart';
-import 'package:bond/features/knowledge_unit/models/unit_list.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class UnitApi {
+  final headersForFile = {
+    'Authorization': 'Bearer $accessKnowledgeToken',
+    'Content-Type': 'multipart/form-data'
+  };
+  final headersForGet = {'Authorization': 'Bearer $accessKnowledgeToken'};
   final headers = {
-    'x-jarvis-guid': jarvisGuid,
-    'Authorization': 'Bearer $jarvisToken',
-    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $accessKnowledgeToken',
+    'Content-Type': 'application/json'
   };
 
-  /// Fetches the list of units for a specific knowledge base.
-  Future<UnitList> getUnitList(String knowledgeId, {int limit = 10}) async {
-    final url = Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/units')
-        .replace(queryParameters: {'limit': limit.toString()});
-    final response = await http.get(url, headers: headers);
-
+  /// Fetches the list of units for a specific unit base.
+  Future<UnitList> getUnitList(String knowledgeId, {int limit = 50}) async {
+    final url =
+        Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/units')
+            .replace(queryParameters: {'limit': limit.toString()});
+    final response = await http.get(url, headers: headersForGet);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return UnitList.fromJson(data);
@@ -28,18 +34,18 @@ class UnitApi {
     }
   }
 
-  /// Deletes a unit from the knowledge base.
+  /// Deletes a unit from the unit base.
   Future<void> deleteUnit(String knowledgeId, String unitId) async {
-    final url =
-        Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/units/$unitId');
-    final response = await http.delete(url, headers: headers);
+    final url = Uri.parse(
+        '$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/units/$unitId');
+    final response = await http.delete(url, headers: headersForGet);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete unit: ${response.body}');
     }
   }
 
-  /// Updates the status of a unit in the knowledge base.
+  /// Updates the status of a unit in the unit base.
   Future<void> updateStatusUnit(String unitId, String status) async {
     final url =
         Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/units/$unitId/status');
@@ -53,39 +59,48 @@ class UnitApi {
 
   /// Uploads a local file as a unit using multipart form data.
   Future<void> uploadLocalFile(String knowledgeId, File file) async {
-    final url = Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/local-file');
+    final url =
+        Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/local-file');
     final request = http.MultipartRequest('POST', url);
-    request.headers.addAll(headers);
+    MediaType mediaType =
+        MediaType.parse(getMimeType(file.path.split('.').last.toLowerCase()));
+    request.headers.addAll(headersForFile);
 
     // Add the file to the request
     request.files.add(http.MultipartFile(
       'file',
       file.openRead(),
-      file.lengthSync(),
+      await file.length(),
       filename: file.path.split('/').last,
+      contentType: mediaType,
     ));
 
     final response = await request.send();
+    print(response.stream.bytesToString());
     if (response.statusCode != 200) {
-      throw Exception('Failed to upload local file.');
+      throw Exception('Failed to upload file');
     }
   }
 
   /// Uploads a web resource as a unit.
-  Future<void> uploadWeb(String knowledgeId, String unitName, String webUrl) async {
-    final url = Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/web');
+  Future<void> uploadWeb(
+      String knowledgeId, String unitName, String webUrl) async {
+    final url =
+        Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/web');
     final response = await http.post(url,
         headers: headers,
         body: jsonEncode({'unitName': unitName, 'webUrl': webUrl}));
-
+    print(response.body);
     if (response.statusCode != 200) {
       throw Exception('Failed to upload web resource: ${response.body}');
     }
   }
 
   /// Uploads a Slack resource as a unit.
-  Future<void> uploadSlack(String knowledgeId, String unitName, MetadataSlack data) async {
-    final url = Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/slack');
+  Future<void> uploadSlack(
+      String knowledgeId, String unitName, MetadataSlack data) async {
+    final url =
+        Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/slack');
     final response = await http.post(url,
         headers: headers,
         body: jsonEncode({
@@ -100,14 +115,16 @@ class UnitApi {
   }
 
   /// Uploads a file from a drive as a unit.
-  Future<void> uploadDrive(String knowledgeId, String unitName, MetadataDrive data) async {
-    final url = Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/drive');
+  Future<void> uploadDrive(
+      String knowledgeId, String unitName, MetadataDrive data) async {
+    final url = Uri.parse(
+        '$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/google-drive');
     final response = await http.post(url,
         headers: headers,
         body: jsonEncode({
           'unitName': unitName,
-          'driveFileId': data.driveFileId,
-          'driveAccessToken': data.driveAccessToken,
+          'googleDriveFolder': data.driveFileId,
+          'accessToken': data.driveAccessToken,
         }));
 
     if (response.statusCode != 200) {
@@ -116,8 +133,10 @@ class UnitApi {
   }
 
   /// Uploads a Confluence resource as a unit.
-  Future<void> uploadConfluence(String knowledgeId, String unitName, MetadataConfluence data) async {
-    final url = Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/confluence');
+  Future<void> uploadConfluence(
+      String knowledgeId, String unitName, MetadataConfluence data) async {
+    final url =
+        Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/$knowledgeId/confluence');
     final response = await http.post(url,
         headers: headers,
         body: jsonEncode({
@@ -130,5 +149,16 @@ class UnitApi {
     if (response.statusCode != 200) {
       throw Exception('Failed to upload Confluence resource: ${response.body}');
     }
+  }
+
+  /// Searches unit in the unit base.
+  Future<UnitList> searchUnit(String knowledgeId, String query,
+      {int limit = 50}) async {
+    final unitList = await getUnitList(knowledgeId, limit: limit);
+    // Filter the unit list based on the query
+    unitList.units.retainWhere(
+        (unit) => unit.name.toLowerCase().contains(query.toLowerCase()));
+
+    return unitList;
   }
 }

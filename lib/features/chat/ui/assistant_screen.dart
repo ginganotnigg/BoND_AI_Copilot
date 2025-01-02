@@ -1,4 +1,3 @@
-import 'package:bond/features/knowledge_base/ui/add_knowledge_dialog.dart';
 import 'package:bond/shared/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -39,12 +38,7 @@ class AssistantScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return const AddKnowledgeDialog();
-            },
-          );
+          context.go('/create-bot');
         },
         icon: const Icon(Icons.add),
         label: const Text("Create Bot"),

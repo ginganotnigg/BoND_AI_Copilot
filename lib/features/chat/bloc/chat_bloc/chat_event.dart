@@ -5,12 +5,21 @@ abstract class ChatEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-
 class SendMessageEvent extends ChatEvent {
   final String message;
   final String modelId;
 
   SendMessageEvent(this.message, this.modelId);
+
+  @override
+  List<Object> get props => [message, modelId];
+}
+
+class FirstSendMessageEvent extends ChatEvent {
+  final String message;
+  final String modelId;
+
+  FirstSendMessageEvent(this.message, this.modelId);
 
   @override
   List<Object> get props => [message, modelId];

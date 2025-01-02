@@ -11,11 +11,13 @@ import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
   final String initialSelectedModel;
+  final String? title;
   final String? conversationId;
 
   const ChatScreen({
     super.key,
     required this.initialSelectedModel,
+    this.title,
     this.conversationId,
   });
 
@@ -25,11 +27,13 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   late String selectedModel;
+  late String? title;
 
   @override
   void initState() {
     super.initState();
     selectedModel = widget.initialSelectedModel;
+    title = widget.title;
   }
 
   void onModelChanged(String newModel) {
@@ -42,7 +46,7 @@ class _ChatScreenState extends State<ChatScreen> {
     int? remainingTokens;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chat with AI"),
+        title: (title == null) ? const Text("Chat with AI") : Text(title!),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -57,7 +61,8 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: BlocBuilder<ChatBloc, ChatState>(
                 builder: (context, state) {
-                  if (state is ChatLoading && state.convParams.messages.isEmpty) {
+                  if (state is ChatLoading &&
+                      state.convParams.messages.isEmpty) {
                     return loadingWidget();
                   }
                   // if (state is ChatResponseReceived &&
@@ -72,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemBuilder: (context, index) {
                       final message = state.convParams.messages[index];
                       return Align(
-                        alignment: message.aiModel == ""
+                        alignment: message.role == 'user'
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         child: Container(
@@ -82,7 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           margin: const EdgeInsets.symmetric(vertical: 4.0),
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
-                            color: message.aiModel == ""
+                            color: message.role == 'user'
                                 ? primaryColor.withOpacity(0.5)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(8.0),
@@ -90,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (message.aiModel != "")
+                              if (message.role != 'user')
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8),
@@ -102,7 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     ),
                                   ),
                                 ),
-                              if (message.aiModel == "")
+                              if (message.aiModel == 'user')
                                 Text(
                                   message.content,
                                   style: const TextStyle(
@@ -149,7 +154,8 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     return BlocProvider(
         create: (_) => ChatBloc()
-          ..add(GetConversationEvent(selectedModel, widget.conversationId ?? '')),
+          ..add(
+              GetConversationEvent(selectedModel, widget.conversationId ?? '')),
         child: buildScaffold(context));
   }
 }

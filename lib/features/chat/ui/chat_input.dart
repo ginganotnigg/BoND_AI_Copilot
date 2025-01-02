@@ -13,7 +13,11 @@ class AIChatInput extends StatefulWidget {
   final int remainingTokens;
   final String selectedModel;
   final ValueChanged<String> onModelChanged;
-  const AIChatInput({super.key, required this.remainingTokens, required this.selectedModel, required this.onModelChanged});
+  const AIChatInput(
+      {super.key,
+      required this.remainingTokens,
+      required this.selectedModel,
+      required this.onModelChanged});
 
   @override
   State<AIChatInput> createState() => _AIChatInputState();
@@ -22,16 +26,24 @@ class AIChatInput extends StatefulWidget {
 class _AIChatInputState extends State<AIChatInput> {
   final TextEditingController _controller = TextEditingController();
 
-
   void updateModel(String model) {
     context.read<ChatBloc>().add(UpdateModelEvent(model));
   }
 
   void sendMessageToChat(BuildContext context, String message) {
-    context.read<ChatBloc>().add(SendMessageEvent(message, widget.selectedModel));
     if (GoRouterState.of(context).uri.toString() != '/ai-chat') {
-      context.go('/ai-chat',
-          extra: {'model': widget.selectedModel, 'conversationId': null});
+      context
+          .read<ChatBloc>()
+          .add(FirstSendMessageEvent(message, widget.selectedModel));
+      context.go('/ai-chat', extra: {
+        'model': widget.selectedModel,
+        'title': null,
+        'conversationId': null
+      });
+    } else {
+      context
+          .read<ChatBloc>()
+          .add(SendMessageEvent(message, widget.selectedModel));
     }
   }
 
@@ -46,7 +58,8 @@ class _AIChatInputState extends State<AIChatInput> {
       ),
       builder: (context) {
         return BlocProvider(
-          create: (_) => ConvBloc()..add(FetchConversations(widget.selectedModel)),
+          create: (_) =>
+              ConvBloc()..add(FetchConversations(widget.selectedModel)),
           child: Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -104,6 +117,7 @@ class _AIChatInputState extends State<AIChatInput> {
                                     '/ai-chat',
                                     extra: {
                                       'model': widget.selectedModel,
+                                      'title': conversation.title,
                                       'conversationId': conversation.id,
                                     },
                                   );

@@ -1,3 +1,4 @@
+import 'package:bond/config/constant.dart';
 import 'package:bond/features/knowledge_unit/models/unit_metadata.dart';
 
 class MetadataSlack extends UnitMetadata {
@@ -23,6 +24,6 @@ class MetadataSlack extends UnitMetadata {
 
   @override
   String getIconPath() {
-    return 'lib/assets/images/resources/slack.png';
+    return slackImagePath;
   }
 }

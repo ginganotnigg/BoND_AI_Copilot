@@ -1,3 +1,4 @@
+import 'package:bond/config/constant.dart';
 import 'package:bond/features/knowledge_unit/models/unit_metadata.dart';
 
 class MetadataUrl extends UnitMetadata {
@@ -20,6 +21,6 @@ class MetadataUrl extends UnitMetadata {
 
   @override
   String getIconPath() {
-    return 'lib/assets/images/resources/web.png';
+    return webImagePath;
   }
 }

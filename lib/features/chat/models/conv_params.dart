@@ -4,7 +4,14 @@ class ConvParams {
   List<ChatMessage> messages;
   String? conversationId;
   String? modelName;
-  ConvParams(this.messages,
-    this.conversationId, this.modelName,
+  ConvParams(
+    this.messages,
+    this.conversationId,
+    this.modelName,
   );
+
+  static from(ConvParams convParams) {
+    return ConvParams(
+        convParams.messages, convParams.conversationId, convParams.modelName);
+  }
 }
