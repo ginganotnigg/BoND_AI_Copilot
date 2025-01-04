@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bond/shared/styles/styles.dart';
+import 'package:go_router/go_router.dart';
 
 Widget buildIconWithText(IconData icon, String text) {
   return Column(
@@ -136,6 +137,20 @@ Widget footer(BuildContext context, int remainingTokens) {
         buildIconWithText(Icons.bolt, remainingTokens.toString()),
         const SizedBox(width: 10),
         buildIconWithText(Icons.rocket, "Upgrade"),
+        const SizedBox(width: 10),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              color: secondaryColor,
+              icon: const Icon(Icons.email),
+              onPressed: () {
+                context.go('/ai-email');
+              },
+            ),
+            const Text('Email', style: TextStyle(color: secondaryColor)),
+          ],
+        ),
         const SizedBox(width: 10),
         IconButton(
           color: secondaryColor,

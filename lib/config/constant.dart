@@ -20,6 +20,8 @@ const String allConversationsUrl = '$baseUrl/v1/ai-chat/conversations';
 const String loginUrl = '$baseUrl/v1/auth/sign-in';
 const String signUpUrl = '$baseUrl/v1/auth/sign-up';
 const String promptUrl = '$baseUrl/v1/prompts';
+const String aiEmailUrl = '$baseUrl/v1/ai-email';
+const String subscribeUrl = '$baseUrl/v1/subscriptions/subscribe';
 const String knowledgeUrl = 'https://knowledge-api.jarvis.cx';
 
 // Images

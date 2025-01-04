@@ -1,3 +1,4 @@
+import 'package:bond/features/ai_email/ui/ai_email_screen.dart';
 import 'package:bond/features/auth/ui/auth_screen.dart';
 import 'package:bond/features/auth/ui/pricing_screen.dart';
 import 'package:bond/features/chat/ui/assistant_screen.dart';
@@ -39,6 +40,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/create-bot',
       builder: (context, state) => const CreateBotScreen(),
+    ),
+    GoRoute(
+      path: '/ai-email',
+      builder: (context, state) => const EmailReplyScreen(),
     ),
     GoRoute(
       path: '/ai-chat',
