@@ -1,3 +1,4 @@
+import 'package:bond/ui/ai-email/ai_email_screen.dart';
 import 'package:bond/ui/auth/auth_screen.dart';
 import 'package:bond/ui/auth/pricing_screen.dart';
 import 'package:bond/ui/chat/assistant_screen.dart';
@@ -44,6 +45,10 @@ final GoRouter router = GoRouter(
           conversationId: conversationId,
         );
       },
+    ),
+    GoRoute(
+      path: '/ai-email',
+      builder: (context, state) => const EmailReplyScreen(),
     ),
   ],
 );

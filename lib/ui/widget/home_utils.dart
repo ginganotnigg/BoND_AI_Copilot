@@ -171,7 +171,7 @@ void showPromptDialog(BuildContext context, Prompt prompt) {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: primaryColor,
                   minimumSize: const Size(double.infinity, 50),
                 ),
                 child: const Text("Send"),
@@ -224,6 +224,20 @@ Widget footer(BuildContext context, int remainingTokens) {
               },
             ),
             const Text('Upgrade', style: TextStyle(color: secondaryColor)),
+          ],
+        ),
+        const SizedBox(width: 10),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              color: secondaryColor,
+              icon: const Icon(Icons.email),
+              onPressed: () {
+                context.go('/ai-email');
+              },
+            ),
+            const Text('Email', style: TextStyle(color: secondaryColor)),
           ],
         ),
         const SizedBox(width: 10),

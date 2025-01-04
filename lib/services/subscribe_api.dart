@@ -7,7 +7,7 @@ class SubscribeApi {
       'plan': plan,
       'period': period,
     };
-    final url = Uri.parse(subscribetUrl).replace(queryParameters: params);
+    final url = Uri.parse(subscribeUrl).replace(queryParameters: params);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
       'Authorization': 'Bearer $jarvisToken',
