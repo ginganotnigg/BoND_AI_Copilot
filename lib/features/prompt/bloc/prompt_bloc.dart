@@ -4,10 +4,10 @@ import 'prompt_event.dart';
 import 'prompt_state.dart';
 
 class PromptBloc extends Bloc<PromptEvent, PromptState> {
-  final PromptApi promptApi;
+  final PromptApi promptApi = PromptApi();
   int currentTabIndex = 0;
 
-  PromptBloc(this.promptApi) : super(PromptInitial()) {
+  PromptBloc() : super(PromptInitial()) {
     on<LoadPromptsEvent>((event, emit) async {
       try {
         final prompts = await promptApi.getPrompts(

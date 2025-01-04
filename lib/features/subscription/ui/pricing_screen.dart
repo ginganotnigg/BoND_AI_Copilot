@@ -11,32 +11,15 @@ class PricingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 4.0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
-          iconSize: 35.0,
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/'); // Navigate back to home route
+            context.go('/');
           },
         ),
-        title: const Center(
-          child: Text(
-            "Pricing Plan",
-            style: TextStyle(
-              color: secondaryColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 35.0,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4.0),
-          child: Container(
-            color: Colors.grey.shade300,
-            height: 4.0,
-          ),
+        title: const Text(
+          'Pricing Plan',
+          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
       ),
       body: const SingleChildScrollView(
