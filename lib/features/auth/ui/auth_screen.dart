@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // Still import if using Bloc for events
 
+import '../../../shared/helpers/auth_helper.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../bloc/auth_event.dart';
-
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -29,8 +29,24 @@ class _AuthScreenState extends State<AuthScreen> {
 
   bool isLogin = true;
 
+  @override
+  void initState() {
+    super.initState();
+    _checkLoggedInStatus();
+  }
+
+  Future<void> _checkLoggedInStatus() async {
+    final isLoggedIn = await AuthHelper.getLoggedInStatus() ?? false;
+    if (isLoggedIn) {
+      if (mounted) {
+        context.go('/');
+      }
+    }
+  }
+
   bool _isStrongPassword(String password) {
-    final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$');
+    final regex = RegExp(
+        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$');
     return regex.hasMatch(password);
   }
 
@@ -87,7 +103,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    isLogin = GoRouter.of(context).routeInformationProvider.value.uri.toString() == '/login';
+    isLogin =
+        GoRouter.of(context).routeInformationProvider.value.uri.toString() ==
+            '/login';
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: SingleChildScrollView(
@@ -111,7 +129,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'lib/assets/images/icon-48.png',
+                    'lib/assets/images/logo/icon-48.png',
                     height: 50,
                   ),
                   const SizedBox(width: 10),
@@ -142,7 +160,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               const Row(
                 children: [
                   Expanded(
@@ -176,8 +194,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: _usernameController,
                     decoration: usernameFieldDecoration,
                     errorText: _usernameError,
-                    obscure: false
-                ),
+                    obscure: false),
                 const SizedBox(height: 16),
               ],
               //EMAIL-------
@@ -185,16 +202,14 @@ class _AuthScreenState extends State<AuthScreen> {
                   controller: _emailController,
                   decoration: emailFieldDecoration,
                   errorText: _emailError,
-                  obscure: false
-              ),
+                  obscure: false),
               const SizedBox(height: 16),
               //PASSWORD-------------
               _textFieldWithErrorShow(
                   controller: _passwordController,
                   decoration: passwordFieldDecoration,
                   errorText: _passwordError,
-                  obscure: true
-              ),
+                  obscure: true),
               const SizedBox(height: 16),
               //PASSWORD RETYPE-------------
               if (!isLogin) ...[
@@ -202,68 +217,70 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: _retypeController,
                     decoration: retypeFieldDecoration,
                     errorText: _retypeError,
-                    obscure: true
-                ),
+                    obscure: true),
                 const SizedBox(height: 16),
               ],
-              BlocConsumer<AuthBloc, AuthState> (
-                  listener: ((context, state) {
-                    if (state is Authenticated) {
-                      context.go('/assistant');
-                    } else if (state is Unauthenticated) {
-                      if (state.message == 'success') {
-                        context.go('/login');
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Signed Up Successfully")));
-                      }
-                      else ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-                    }
-                    else if (state is AuthError) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
-                    }
-                  }),
-                  builder: ((context, state) {
-                    if (state is Loading) {
-                      return Container();
-                    } else if (state is Unauthenticated) {
-                      return SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _validateInputs();
-                            if (isLogin) {
-                              context.read<AuthBloc>().add(
+              BlocConsumer<AuthBloc, AuthState>(listener: ((context, state) {
+                if (state is Authenticated) {
+                  context.go('/');
+                } else if (state is Unauthenticated) {
+                  if (state.status == true) {
+                    context.go('/login');
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.message)));
+                  } else {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.message)));
+                  }
+                } else if (state is AuthError) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(state.error)));
+                }
+              }), builder: ((context, state) {
+                if (state is Loading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is Unauthenticated) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _validateInputs();
+                        if (isLogin) {
+                          context.read<AuthBloc>().add(
                                 SignInRequested(
                                   _emailController.text.trim(),
                                   _passwordController.text.trim(),
                                 ),
                               );
-                            }
-                            else if (_usernameError == null && _emailError == null && _passwordError == null && _retypeError == null) {
-                              // Proceed with login or registration
-                               {
-                                context.read<AuthBloc>().add(
+                        } else if (_usernameError == null &&
+                            _emailError == null &&
+                            _passwordError == null &&
+                            _retypeError == null) {
+                          {
+                            context.read<AuthBloc>().add(
                                   SignUpRequested(
                                     _emailController.text.trim(),
                                     _passwordController.text.trim(),
                                     _usernameController.text.trim(),
                                   ),
                                 );
-                              }
-                            }
-                          },
-                          style: filled,
-                          child: Text(
-                            isLogin ? 'Login' : 'Register',
-                            style: const TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      );
-                    } else return Container();
-                  })
-              ),
+                          }
+                        }
+                      },
+                      style: filled,
+                      child: Text(
+                        isLogin ? 'Login' : 'Register',
+                        style: const TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              })),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
@@ -281,16 +298,14 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 
-  Widget _textFieldWithErrorShow({
-    required TextEditingController controller,
-    required InputDecoration decoration,
-    String? errorText,
-    required bool obscure
-  }) {
+  Widget _textFieldWithErrorShow(
+      {required TextEditingController controller,
+      required InputDecoration decoration,
+      String? errorText,
+      required bool obscure}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

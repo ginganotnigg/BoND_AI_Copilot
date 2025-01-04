@@ -17,9 +17,21 @@ const String refreshKnowledgeToken =
 const String baseUrl = 'https://api.jarvis.cx/api';
 const String aiChatUrl = '$baseUrl/v1/ai-chat/messages';
 const String allConversationsUrl = '$baseUrl/v1/ai-chat/conversations';
+//auth
+const String getUserUrl = '$baseUrl/v1/auth/me';
 const String loginUrl = '$baseUrl/v1/auth/sign-in';
 const String signUpUrl = '$baseUrl/v1/auth/sign-up';
+const String signOutUrl = '$baseUrl/v1/auth/sign-out';
+const String refreshTokenUrl = '$baseUrl/v1/auth/refresh';
+
 const String promptUrl = '$baseUrl/v1/prompts';
+
+const String knowledgeCoreUrl = 'https://knowledge-api.jarvis.cx/kb-core';
+
+const String loginKBUrl = '$knowledgeUrl/v1/auth/external-sign-in';
+const String refreshTokenKBUrl = '$knowledgeUrl/v1/auth/refresh';
+const String botUrl = '$knowledgeUrl/v1/ai-assistant';
+//
 const String aiEmailUrl = '$baseUrl/v1/ai-email';
 const String subscribeUrl = '$baseUrl/v1/subscriptions/subscribe';
 const String knowledgeUrl = 'https://knowledge-api.jarvis.cx';

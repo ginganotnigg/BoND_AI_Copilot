@@ -7,6 +7,12 @@ import 'package:bond/shared/styles/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/bloc/auth_bloc.dart';
+import '../../features/auth/bloc/auth_event.dart';
+import '../../features/auth/bloc/auth_state.dart';
+import '../../features/auth/models/user.dart';
+import '../helpers/auth_helper.dart';
+
 Widget buildIconWithText(IconData icon, String text) {
   return Column(
     mainAxisSize: MainAxisSize.min,
@@ -242,16 +248,111 @@ Widget footer(BuildContext context, int remainingTokens) {
             // Placeholder for devices icon
           },
         ),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            gradient: gradient,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: const Center(child: Text("A")),
-        ),
+        userContainer(context), // Updated user container
       ],
     ),
+  );
+}
+
+Future<User> getUserInfo() async {
+  String username = await AuthHelper.getName() ?? 'Unknown';
+  String email = await AuthHelper.getEmail() ?? '';
+  return User(username, email);
+}
+
+Widget userContainer(BuildContext context) {
+  return FutureBuilder<User>(
+    future: getUserInfo(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      } else if (snapshot.hasError || !snapshot.hasData) {
+        return const Text("Error");
+      } else {
+        final userInfo = snapshot.data!;
+        final username = userInfo.name;
+        final email = userInfo.email;
+        final displayChar =
+            (username.isNotEmpty && RegExp(r'^[a-zA-Z]').hasMatch(username[0]))
+                ? username[0].toUpperCase()
+                : '?';
+        return GestureDetector(
+          onTap: () => showUserDialog(context, username, email),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Center(
+              child: Text(
+                displayChar,
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        );
+      }
+    },
+  );
+}
+
+void showUserDialog(BuildContext context, String username, String email) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        title: Center(child: Text(username)),
+        content: Container(
+          height: 110, // Set your desired height here
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(email, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    context.go('/assistant');
+                  },
+                  style: filled,
+                  child: const Text("My Bots"),
+                ),
+                const SizedBox(height: 8),
+                BlocConsumer<AuthBloc, AuthState>(
+                  listener: ((context, state) {
+                    if (state is Unauthenticated) {
+                      context.go('/login');
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.message)));
+                    } else if (state is AuthError) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.error)));
+                    }
+                  }),
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        context.read<AuthBloc>().add(
+                              const SignOutRequested(),
+                            );
+                      },
+                      style: outlined,
+                      child: const Text("Sign Out"),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
   );
 }

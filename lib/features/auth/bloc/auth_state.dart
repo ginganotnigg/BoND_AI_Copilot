@@ -20,17 +20,16 @@ class Authenticated extends AuthState {
   List<Object?> get props => [token];
 }
 
-// This is the initial state of the bloc. When the user is not authenticated the state is changed to Unauthenticated.
 class Unauthenticated extends AuthState {
   final String message;
+  final bool status;
 
-  const Unauthenticated(this.message);
+  const Unauthenticated(this.message, this.status);
 
   @override
   List<Object?> get props => [message];
 }
 
-// If any error occurs the state is changed to AuthError.
 class AuthError extends AuthState {
   final String error;
 

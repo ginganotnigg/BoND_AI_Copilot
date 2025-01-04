@@ -4,6 +4,8 @@ import 'package:bond/shared/widget/home_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../shared/helpers/auth_helper.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 

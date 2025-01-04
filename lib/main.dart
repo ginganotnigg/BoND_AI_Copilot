@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'features/auth/bloc/auth_bloc.dart';
+import 'features/bot/bloc/bot_bloc.dart';
+import 'features/bot_knowledge/bloc/bot_knowledge_bloc.dart';
 
 void main() {
   runApp(
@@ -12,6 +14,9 @@ void main() {
       providers: [
         BlocProvider(create: (_) => ChatBloc()),
         BlocProvider(create: (_) => AuthBloc()),
+        BlocProvider(create: (_) => BotBloc()),
+        BlocProvider(create: (_) => BotKnowledgeBloc()),
+        BlocProvider(create: (_) => ImportKnowledgeBloc()),
         BlocProvider(create: (_) => PromptBloc()),
       ],
       child: const BondAI(),
