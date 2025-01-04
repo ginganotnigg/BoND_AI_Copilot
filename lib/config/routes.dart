@@ -1,6 +1,5 @@
 import 'package:bond/features/ai_email/ui/ai_email_screen.dart';
 import 'package:bond/features/auth/ui/auth_screen.dart';
-import 'package:bond/features/auth/ui/pricing_screen.dart';
 import 'package:bond/features/chat/ui/assistant_screen.dart';
 import 'package:bond/features/chat/ui/chat_screen.dart';
 import 'package:bond/features/knowledge_base/models/knowledge.dart';
@@ -11,6 +10,7 @@ import 'package:bond/features/knowledge_unit/ui/file_screen.dart';
 import 'package:bond/features/knowledge_unit/ui/slack_screen.dart';
 import 'package:bond/features/knowledge_unit/ui/unit_screen.dart';
 import 'package:bond/features/knowledge_unit/ui/web_screen.dart';
+import 'package:bond/features/subscription/ui/pricing_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bond/features/auth/ui/home.dart';
 

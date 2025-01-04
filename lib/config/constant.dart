@@ -23,6 +23,7 @@ const String promptUrl = '$baseUrl/v1/prompts';
 const String aiEmailUrl = '$baseUrl/v1/ai-email';
 const String subscribeUrl = '$baseUrl/v1/subscriptions/subscribe';
 const String knowledgeUrl = 'https://knowledge-api.jarvis.cx';
+const String subscriptionUrl = 'https://admin.jarvis.cx/pricing/overview';
 
 // Images
 const String confluenceImagePath = 'lib/assets/images/resources/confluence.png';

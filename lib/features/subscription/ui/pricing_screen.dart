@@ -1,6 +1,8 @@
+import 'package:bond/config/constant.dart';
 import 'package:bond/shared/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PricingScreen extends StatelessWidget {
   const PricingScreen({super.key});
@@ -197,7 +199,14 @@ class SubscriptionCard extends StatelessWidget {
             const SizedBox(height: 16),
             if (title != 'Basic') ...[
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final Uri url = Uri.parse(subscriptionUrl);
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else {
+                    throw Exception("Could not launch the URL");
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: _getButtonColor(title),
