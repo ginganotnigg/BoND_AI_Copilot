@@ -1,9 +1,9 @@
 import 'package:bond/features/ai_email/ui/ai_email_screen.dart';
 import 'package:bond/features/auth/ui/auth_screen.dart';
-import 'package:bond/features/bot/ui/assistant_screen.dart';
+import 'package:bond/features/bot/ui/bot_screen.dart';
 import 'package:bond/features/chat/ui/chat_screen.dart';
 import 'package:bond/features/knowledge_base/models/knowledge.dart';
-import 'package:bond/features/knowledge_base/ui/create_bot.dart';
+import 'package:bond/features/knowledge_base/ui/bots_and_knowledge_screen.dart';
 import 'package:bond/features/knowledge_unit/ui/confluence_screen.dart';
 import 'package:bond/features/knowledge_unit/ui/drive_screen.dart';
 import 'package:bond/features/knowledge_unit/ui/file_screen.dart';
@@ -15,11 +15,15 @@ import 'package:go_router/go_router.dart';
 import 'package:bond/features/auth/ui/home.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/welcome',
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const HomeScreen(isLoggedIn: true),
+    ),
+    GoRoute(
+      path: '/welcome',
+      builder: (context, state) => const HomeScreen(isLoggedIn: false),
     ),
     GoRoute(
       path: '/login',
@@ -35,11 +39,11 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/assistant',
-      builder: (context, state) => const AssistantScreen(),
+      builder: (context, state) => const BotsAndKnowledgeScreen(),
     ),
     GoRoute(
-      path: '/create-bot',
-      builder: (context, state) => const CreateBotScreen(),
+      path: '/bot',
+      builder: (context, state) => const BotScreen(),
     ),
     GoRoute(
       path: '/ai-email',

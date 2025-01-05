@@ -26,11 +26,6 @@ const String refreshTokenUrl = '$baseUrl/v1/auth/refresh';
 
 const String promptUrl = '$baseUrl/v1/prompts';
 
-const String knowledgeCoreUrl = 'https://knowledge-api.jarvis.cx/kb-core';
-
-const String loginKBUrl = '$knowledgeUrl/v1/auth/external-sign-in';
-const String refreshTokenKBUrl = '$knowledgeUrl/v1/auth/refresh';
-const String botUrl = '$knowledgeUrl/v1/ai-assistant';
 //
 const String aiEmailUrl = '$baseUrl/v1/ai-email';
 const String subscribeUrl = '$baseUrl/v1/subscriptions/subscribe';
@@ -43,3 +38,9 @@ const String driveImagePath = 'lib/assets/images/resources/drive.png';
 const String localFileImagePath = 'lib/assets/images/resources/file.png';
 const String slackImagePath = 'lib/assets/images/resources/slack.png';
 const String webImagePath = 'lib/assets/images/resources/web.png';
+
+const String loginKBUrl = '$knowledgeUrl/kb-core/v1/auth/external-sign-in';
+const String refreshTokenKBUrl = '$knowledgeUrl/kb-core/v1/auth/refresh';
+const String botUrl = '$knowledgeUrl/kb-core/v1/ai-assistant';
+
+

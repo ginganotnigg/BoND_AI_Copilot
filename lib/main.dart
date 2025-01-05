@@ -18,6 +18,7 @@ void main() {
         BlocProvider(create: (_) => BotKnowledgeBloc()),
         BlocProvider(create: (_) => ImportKnowledgeBloc()),
         BlocProvider(create: (_) => PromptBloc()),
+        //BlocProvider(create: (_) => KnowledgeBloc()),
       ],
       child: const BondAI(),
     ),

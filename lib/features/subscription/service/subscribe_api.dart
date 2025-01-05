@@ -1,8 +1,10 @@
 import 'package:bond/config/constant.dart';
+import 'package:bond/shared/helpers/auth_helper.dart';
 import 'package:http/http.dart' as http;
 
 class SubscribeApi {
   Future<String> subribePlan(String plan, String period) async {
+    final token = await AuthHelper.getAccessToken() ?? "";
     Map<String, String> params = {
       'plan': plan,
       'period': period,
@@ -10,7 +12,7 @@ class SubscribeApi {
     final url = Uri.parse(subscribeUrl).replace(queryParameters: params);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
 

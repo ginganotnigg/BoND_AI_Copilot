@@ -3,12 +3,17 @@ import 'package:bond/config/constant.dart';
 import 'package:bond/features/prompt/models/prompt.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../shared/helpers/auth_helper.dart';
+import '../../auth/service/auth_api.dart';
+
 class PromptApi {
+  AuthApi authApi = AuthApi();
   Future<Prompt> createPrompt(Prompt prompt) async {
+    String token = await AuthHelper.getAccessToken() ?? '';
     final url = Uri.parse(promptUrl);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
     final body = jsonEncode(prompt.toJson());
@@ -17,6 +22,9 @@ class PromptApi {
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 201) {
         return Prompt.fromJson(jsonDecode(response.body));
+      } if (response.statusCode == 401) {
+        await authApi.refreshToken();
+        return await createPrompt(prompt);
       } else {
         throw Exception('Failed to create prompt');
       }
@@ -33,10 +41,11 @@ class PromptApi {
     int? offset,
     String? query,
   }) async {
+    String token = await AuthHelper.getAccessToken() ?? '';
     final url = Uri.parse(promptUrl);
     final headers = {
       'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
     final params = {
@@ -55,6 +64,16 @@ class PromptApi {
         final Map<String, dynamic> body = jsonDecode(response.body);
         final List<dynamic> prompts = body['items'];
         return prompts.map((dynamic item) => Prompt.fromJson(item)).toList();
+      } if (response.statusCode == 401) {
+        await authApi.refreshToken();
+        return await getPrompts(
+            category: category,
+            isFavorite: isFavorite,
+            isPublic: isPublic,
+            limit: limit,
+            offset: offset,
+            query: query
+        );
       } else {
         throw Exception('Failed to fetch prompts');
       }
@@ -64,10 +83,11 @@ class PromptApi {
   }
 
   Future<Prompt> updatePrompt(String id, Prompt prompt) async {
+    String token = await AuthHelper.getAccessToken() ?? '';
     final url = Uri.parse('$promptUrl/$id');
     final headers = {
       'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
     final body = jsonEncode(prompt.toJson());
@@ -76,6 +96,9 @@ class PromptApi {
       final response = await http.patch(url, headers: headers, body: body);
       if (response.statusCode == 200) {
         return Prompt.fromJson(jsonDecode(response.body));
+      } if (response.statusCode == 401) {
+        await authApi.refreshToken();
+        return await updatePrompt(id, prompt);
       } else {
         throw Exception('Failed to update prompt');
       }
@@ -85,16 +108,20 @@ class PromptApi {
   }
 
   Future<void> deletePrompt(String id) async {
+    String token = await AuthHelper.getAccessToken() ?? '';
     final url = Uri.parse('$promptUrl/$id');
     final headers = {
       'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
-
     try {
       final response = await http.delete(url, headers: headers);
       if (response.statusCode != 200) {
+        if (response.statusCode == 401) {
+          await authApi.refreshToken();
+          return await deletePrompt(id);
+        }
         throw Exception('Failed to delete prompt');
       }
     } catch (e) {
@@ -103,10 +130,11 @@ class PromptApi {
   }
 
   Future<void> toggleFavoritePrompt(String id, bool isFavorite) async {
+    String token = await AuthHelper.getAccessToken() ?? '';
     final url = Uri.parse('$promptUrl/$id/favorite');
     final headers = {
       'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
 
@@ -115,6 +143,10 @@ class PromptApi {
           ? await http.post(url, headers: headers)
           : await http.delete(url, headers: headers);
       if (response.statusCode != 200 && response.statusCode != 201) {
+        if (response.statusCode == 401) {
+          await authApi.refreshToken();
+          return await toggleFavoritePrompt(id, isFavorite);
+        }
         throw Exception('Failed to toggle favorite prompt');
       }
     } catch (e) {

@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class CreateBotScreen extends StatefulWidget {
-  const CreateBotScreen({super.key});
+import '../../bot/ui/bot_screen.dart';
+
+class BotsAndKnowledgeScreen extends StatefulWidget {
+  const BotsAndKnowledgeScreen({super.key});
 
   @override
-  State<CreateBotScreen> createState() => _CreateBotScreenState();
+  State<BotsAndKnowledgeScreen> createState() => _BotsAndKnowledgeScreenState();
 }
 
-class _CreateBotScreenState extends State<CreateBotScreen>
+class _BotsAndKnowledgeScreenState extends State<BotsAndKnowledgeScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -51,7 +53,7 @@ class _CreateBotScreenState extends State<CreateBotScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          const Center(child: Text('Bots Page (Not Implemented)')),
+          const BotScreen(),
           BlocProvider(
             create: (_) => KnowledgeBloc()..add(FetchKnowledgeEvent()),
             child: const KnowledgeScreen(),

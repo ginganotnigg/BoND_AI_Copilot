@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // Still import if using Bloc for events
 
-import '../../../shared/helpers/auth_helper.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../bloc/auth_event.dart';
@@ -32,21 +31,11 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLoggedInStatus();
-  }
-
-  Future<void> _checkLoggedInStatus() async {
-    final isLoggedIn = await AuthHelper.getLoggedInStatus() ?? false;
-    if (isLoggedIn) {
-      if (mounted) {
-        context.go('/');
-      }
-    }
   }
 
   bool _isStrongPassword(String password) {
     final regex = RegExp(
-        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$');
+        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_.~])[A-Za-z\d!@#$%^&*()_.~]{8,}$');
     return regex.hasMatch(password);
   }
 

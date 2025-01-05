@@ -1,9 +1,9 @@
 import 'package:bond/shared/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../shared/styles/styles.dart';
+import '../../../shared/widget/custom_search_bar.dart';
 import '../../bot_knowledge/ui/knowledge_in_bot_screen.dart';
 import '../bloc/bot_bloc.dart';
 import '../bloc/bot_event.dart';
@@ -12,14 +12,14 @@ import '../models/bot.dart';
 import 'add_bot_screen.dart';
 import 'edit_bot_screen.dart';
 
-class AssistantScreen extends StatefulWidget {
-  const AssistantScreen({super.key});
+class BotScreen extends StatefulWidget {
+  const BotScreen({super.key});
 
   @override
-  State<AssistantScreen> createState() => _AssistantScreenState();
+  State<BotScreen> createState() => _BotScreenState();
 }
 
-class _AssistantScreenState extends State<AssistantScreen> {
+class _BotScreenState extends State<BotScreen> {
   late List<Bot> bots;
   late List<Bot> filteredBots;
   final TextEditingController searchController = TextEditingController();
@@ -33,7 +33,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
 
   void _filterBots() {
     context.read<BotBloc>().add(
-      SearchBotsRequested(bots, searchController.text)
+        SearchBotsRequested(bots, searchController.text)
     );
   }
 
@@ -43,15 +43,6 @@ class _AssistantScreenState extends State<AssistantScreen> {
       const GetBotsRequested(),
     );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("AI Bots"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/');
-          },
-        ),
-      ),
       body: BlocConsumer<BotBloc, BotState>(
         listener: (context, state) {
           if (state is BotLoaded) {
@@ -82,19 +73,27 @@ class _AssistantScreenState extends State<AssistantScreen> {
           if (state is BotInitial) {
             return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      hintText: "Search by name or description",
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Builder(
+                        builder: (context) {
+                          return customSearchBar(context, (query) {
+                            _filterBots();
+                          });
+                        },
                       ),
                     ),
-                    onChanged: (_) => _filterBots(),
-                  ),
+                    IconButton(
+                      icon: const Icon(Icons.add, color: primaryColor),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (dialogContext) => const AddBotScreen(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: bots.isEmpty
@@ -106,19 +105,6 @@ class _AssistantScreenState extends State<AssistantScreen> {
           }
           return Container();
         },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddBotScreen(),
-            ),
-          );
-        },
-        icon: const Icon(Icons.add),
-        label: const Text("Create Bot"),
-        backgroundColor: Colors.blueAccent,
       ),
     );
   }
@@ -158,12 +144,15 @@ class _AssistantScreenState extends State<AssistantScreen> {
           child: ListTile(
             title: Text(
               bot.name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(bot.description),
+                Text(
+                    bot.description,
+                    style: const TextStyle(color: primaryColor),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   "Last updated: ${bot.updatedAt}",
@@ -175,7 +164,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.storage),
+                  icon: const Icon(Icons.library_books, color: primaryColor),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -186,7 +175,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.edit),
+                  icon: const Icon(Icons.edit, color: primaryColor),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -197,7 +186,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: const Icon(Icons.delete, color: primaryColor),
                   onPressed: () {
                     showDeleteConfirmationDialog(context, bot);
                   },

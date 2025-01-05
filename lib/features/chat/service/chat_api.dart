@@ -6,14 +6,24 @@ import 'package:bond/features/chat/models/conv_params.dart';
 import 'package:bond/features/chat/models/conversation.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../shared/helpers/auth_helper.dart';
+import '../../auth/service/auth_api.dart';
+
 class ChatApi {
-  final headers = {
-    'x-jarvis-guid': jarvisGuid,
-    'Authorization': 'Bearer $jarvisToken',
-    'Content-Type': 'application/json',
-  };
+  AuthApi authApi = AuthApi();
+
+
+  Future<Map<String, String>> makeHeaders() async {
+    String token = await AuthHelper.getAccessToken() ?? '';
+    return {
+      'x-jarvis-guid': jarvisGuid,
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+  }
 
   Future<String> responseFromAI(ConvParams convParams) async {
+    //
     final url = Uri.parse(aiChatUrl);
     final model = convParams.modelName;
     final convId = convParams.conversationId;
@@ -36,6 +46,7 @@ class ChatApi {
     print('Request body: $body');
 
     try {
+      Map<String,String> headers = await makeHeaders();
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -44,7 +55,11 @@ class ChatApi {
         //   'message': responseData['message'],
         //   'remainingUsage': responseData['remainingUsage'],
         // };
-      } else {
+      }
+      if (response.statusCode == 401) {
+        await authApi.refreshToken();
+        return await responseFromAI(convParams);
+      }else {
         print('Error response status: ${response.statusCode}');
         print('Error response body: ${response.body}');
         throw Exception('Failed to get response from AI');
@@ -61,11 +76,7 @@ class ChatApi {
       'assistantModel': 'dify',
     };
     final url = Uri.parse(allConversationsUrl).replace(queryParameters: params);
-    final headers = {
-      'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
-      'Content-Type': 'application/json',
-    };
+    Map<String,String> headers = await makeHeaders();
 
     try {
       final response = await http.get(url, headers: headers);
@@ -75,6 +86,9 @@ class ChatApi {
             .map((conversation) => Conversation.fromJson(conversation))
             .toList();
         return conversations;
+      } if (response.statusCode == 401) {
+        await authApi.refreshToken();
+        return await getConversations(model);
       } else {
         print('Error response status: ${response.statusCode}');
         print('Error response body: ${response.body}');
@@ -99,11 +113,7 @@ class ChatApi {
     };
     final url = Uri.parse('$allConversationsUrl/$convId/messages/')
         .replace(queryParameters: params);
-    final headers = {
-      'x-jarvis-guid': jarvisGuid,
-      'Authorization': 'Bearer $jarvisToken',
-      'Content-Type': 'application/json',
-    };
+    Map<String,String> headers = await makeHeaders();
 
     try {
       final response = await http.get(url, headers: headers);
@@ -125,7 +135,12 @@ class ChatApi {
           ];
         }).toList();
         return messages;
-      } else {
+      }
+      if (response.statusCode == 401) {
+        await authApi.refreshToken();
+        return await getConvMessages(model, convId);
+      }
+      else {
         print('Error response status: ${response.statusCode}');
         print('Error response body: ${response.body}');
         throw Exception('Failed to fetch conversations');
