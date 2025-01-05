@@ -22,6 +22,25 @@ class ChatApi {
     };
   }
 
+  Future<int> getTokens() async {
+    final url = Uri.parse('$baseUrl/v1/tokens/usage');
+    try {
+      Map<String,String> headers = await makeHeaders();
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print('Tokens: ${data['availableTokens']}');
+        return data['availableTokens'];
+      } else {
+        print('Error response status: ${response.statusCode}');
+        print('Error response body: ${response.body}');
+        throw Exception('Failed to get response from AI');
+      }
+    } catch (e) {
+      throw Exception('Failed to send message: $e');
+    }
+  }
+
   Future<String> responseFromAI(ConvParams convParams) async {
     //
     final url = Uri.parse(aiChatUrl);
@@ -59,7 +78,7 @@ class ChatApi {
       if (response.statusCode == 401) {
         await authApi.refreshToken();
         return await responseFromAI(convParams);
-      }else {
+      } else {
         print('Error response status: ${response.statusCode}');
         print('Error response body: ${response.body}');
         throw Exception('Failed to get response from AI');

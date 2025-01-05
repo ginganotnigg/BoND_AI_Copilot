@@ -43,7 +43,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildScaffold(BuildContext context) {
-    int? remainingTokens;
     return Scaffold(
       appBar: AppBar(
         title: (title == null) ? const Text("Chat with AI") : Text(title!),
@@ -136,7 +135,6 @@ class _ChatScreenState extends State<ChatScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: AIChatInput(
-                remainingTokens: remainingTokens ?? 50,
                 selectedModel: selectedModel,
                 onModelChanged: onModelChanged,
               ),

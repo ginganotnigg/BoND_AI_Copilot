@@ -52,7 +52,7 @@ class UnitScreen extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              context.go('/create-bot');
+              context.go('/assistant');
             },
           ),
         ),

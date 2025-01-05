@@ -44,7 +44,7 @@ class WebScreen extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              context.go('/create-bot');
+              context.go('/assistant');
             },
           ),
         ),
@@ -151,7 +151,7 @@ class WebScreen extends StatelessWidget {
                             final webUrl = webUrlController.text;
                             context.read<UnitBloc>().add(
                                 UploadWebEvent(knowledge, unitName, webUrl));
-                            context.go('/create-bot');
+                            context.go('/assistant');
                           },
                           child: (state is UnitLoading)
                               ? const Stack(

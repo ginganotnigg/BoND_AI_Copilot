@@ -8,19 +8,16 @@ import 'package:bond/features/prompt/ui/prompt_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bond/features/chat/bloc/chat_bloc/chat_bloc.dart';
+import 'package:bond/features/chat/bloc/chat_bloc/chat_state.dart';
 import 'package:bond/features/chat/bloc/conv_bloc/conv_bloc.dart';
 import 'package:bond/features/chat/bloc/chat_bloc/chat_event.dart';
 import 'package:go_router/go_router.dart';
 
 class AIChatInput extends StatefulWidget {
-  final int remainingTokens;
   final String selectedModel;
   final ValueChanged<String> onModelChanged;
   const AIChatInput(
-      {super.key,
-      required this.remainingTokens,
-      required this.selectedModel,
-      required this.onModelChanged});
+      {super.key, required this.selectedModel, required this.onModelChanged});
 
   @override
   State<AIChatInput> createState() => _AIChatInputState();
@@ -28,6 +25,7 @@ class AIChatInput extends StatefulWidget {
 
 class _AIChatInputState extends State<AIChatInput> {
   final TextEditingController _controller = TextEditingController();
+  int remainingTokens = 0;
 
   void updateModel(String model) {
     context.read<ChatBloc>().add(UpdateModelEvent(model));
@@ -270,61 +268,72 @@ class _AIChatInputState extends State<AIChatInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            AIModelDropdown(
-              selectedModel: widget.selectedModel,
-              onModelSelected: widget.onModelChanged,
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () => showConversationHistory(context),
-              icon: const Icon(Icons.history, color: primaryColor),
-            ),
-          ],
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Row(
+    return BlocProvider(
+      create: (context) => ChatBloc(),
+      child: Column(
+        children: [
+          Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.generating_tokens, color: primaryColor),
-                onPressed: () => showPromptManagementDialog(context),
+              AIModelDropdown(
+                selectedModel: widget.selectedModel,
+                onModelSelected: widget.onModelChanged,
               ),
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: "Ask me anything or press '/' for prompts ...",
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (value) => {
-                    if (value == '/') {showPromptList(context)}
-                  },
-                ),
-              ),
+              const Spacer(),
               IconButton(
-                icon: const Icon(Icons.send, color: primaryColor),
-                onPressed: () {
-                  final message = _controller.text.trim();
-                  if (message.isNotEmpty) {
-                    sendMessageToChat(context, message);
-                    _controller.clear();
-                  }
-                },
+                onPressed: () => showConversationHistory(context),
+                icon: const Icon(Icons.history, color: primaryColor),
               ),
             ],
           ),
-        ),
-        footer(context, widget.remainingTokens),
-      ],
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  icon:
+                      const Icon(Icons.generating_tokens, color: primaryColor),
+                  onPressed: () => showPromptManagementDialog(context),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      hintText: "Ask me anything or press '/' for prompts ...",
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (value) => {
+                      if (value == '/') {showPromptList(context)}
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send, color: primaryColor),
+                  onPressed: () {
+                    final message = _controller.text.trim();
+                    if (message.isNotEmpty) {
+                      sendMessageToChat(context, message);
+                      _controller.clear();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              if (state is TokenLoaded) {
+                remainingTokens = state.tokens;
+              }
+              return footer(context, remainingTokens);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -47,7 +47,7 @@ class SlackScreen extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              context.go('/create-bot');
+              context.go('/assistant');
             },
           ),
         ),
@@ -166,21 +166,19 @@ class SlackScreen extends StatelessWidget {
                       builder: (context, state) {
                         return ElevatedButton(
                           style: filled,
-                          onPressed: (state is UnitLoading)
-                              ? null
-                              : () {
-                                  if (!formKey.currentState!.validate()) {
-                                    return;
-                                  }
-                                  final unitName = nameController.text;
-                                  final metadata = MetadataSlack(
-                                    slackWorkspace:
-                                        slackWorkspaceController.text,
-                                    slackBotToken: slackBotTokenController.text,
-                                  );
-                                  context.read<UnitBloc>().add(UploadSlackEvent(
-                                      knowledge, unitName, metadata));
-                                },
+                          onPressed: () {
+                            if (!formKey.currentState!.validate()) {
+                              return;
+                            }
+                            final unitName = nameController.text;
+                            final metadata = MetadataSlack(
+                              slackWorkspace: slackWorkspaceController.text,
+                              slackBotToken: slackBotTokenController.text,
+                            );
+                            context.read<UnitBloc>().add(UploadSlackEvent(
+                                knowledge, unitName, metadata));
+                            context.go('/assistant');
+                          },
                           child: (state is UnitLoading)
                               ? const Stack(
                                   alignment: Alignment.center,
