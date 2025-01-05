@@ -3,10 +3,10 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - advanced-features
   pull_request:
     branches:
-      - main
+      - advanced-features
 
 jobs:
   test:
