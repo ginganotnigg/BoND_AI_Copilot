@@ -16,6 +16,8 @@
         -  [Basic-Feature Demo F2](https://drive.google.com/file/d/1Iq_vk05FvL5C1HEMw5d81wtZSYvq-qrD/view?usp=sharing)
         -  [Basic-Feature Demo F3 & F6](https://drive.google.com/file/d/1vgT4qBL3nLWHqG7blIHi_2v21oPD06H3/view?usp=drive_link)
         -  [Git Branch Basic-Feature](https://github.com/ginganotnigg/BoND_AI_Copilot/tree/mock-ui)
-    3. Intermediate features
-    4. Advanced features
+    3. Advanced features
+       - [Phiếu chấm điểm](https://drive.google.com/drive/u/0/folders/1uDHv69WQmKZF1_D5ZIwqP-cNXPZrlmkS)
+       - [Báo cáo](https://drive.google.com/drive/u/0/folders/10NPCcvmQN3-WmrMXB7I1QRCmGgdZmLw3)
+       - [Demo](https://drive.google.com/drive/u/0/folders/1zJXdMru2gdhT15ouiP3yzR93FYoiBprI)
 
