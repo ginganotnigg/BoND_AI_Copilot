@@ -129,8 +129,8 @@ class UnitScreen extends StatelessWidget {
                                   activeTrackColor: primaryColor,
                                   onChanged: (value) {
                                     context.read<UnitBloc>().add(
-                                        UpdateStatusUnitEvent(unit.id,
-                                            value ? 'Active' : 'Inactive'));
+                                        UpdateStatusUnitEvent(knowledge,
+                                            unit.id, value ? true : false));
                                   },
                                 ),
                                 IconButton(

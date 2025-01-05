@@ -76,7 +76,7 @@ class UnitApi {
   }
 
   /// Updates the status of a unit in the unit base.
-  Future<void> updateStatusUnit(String unitId, String status) async {
+  Future<void> updateStatusUnit(String unitId, bool status) async {
     final url =
         Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/units/$unitId/status');
     final headers = await makeHeaders();
