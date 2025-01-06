@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:bond/shared/styles/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_event.dart';
@@ -47,6 +48,19 @@ Widget buildListTile(BuildContext context, String text) {
       // showPromptDialog(context, text);
     },
   );
+}
+
+Future<void> _launchURL(BuildContext context, String link) async {
+  final Uri url =
+      Uri.parse(link);
+  try {
+    if (!await canLaunchUrl(url)) {
+      throw 'URL is invalid: $url';
+    }
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } catch (e) {
+    print('Error when opened URL: $e');
+  }
 }
 
 void showPromptDialog(BuildContext context, Prompt prompt) {
@@ -224,28 +238,21 @@ Widget footer(BuildContext context, int remainingTokens) {
           color: secondaryColor,
           icon: const Icon(Icons.star_border),
           onPressed: () {
-            // Placeholder for favorite/star icon
+            _launchURL(context, 'https://chromewebstore.google.com/detail/jarvis-ai-chat-gpt-bing-d/kbhaffhbhcfmogkkbfanilniagcefnhi?utm_source=extension');
           },
         ),
         IconButton(
           color: secondaryColor,
           icon: const Icon(Icons.help_outline),
           onPressed: () {
-            // Placeholder for help icon
-          },
-        ),
-        IconButton(
-          color: secondaryColor,
-          icon: const Icon(Icons.mail_outline),
-          onPressed: () {
-            // Placeholder for mail icon
+            _launchURL(context, 'https://jarvis.cx/help/');
           },
         ),
         IconButton(
           color: secondaryColor,
           icon: const Icon(Icons.devices),
           onPressed: () {
-            // Placeholder for devices icon
+            _launchURL(context, 'https://jarvis.cx/?utm_source=extension');
           },
         ),
         userContainer(context), // Updated user container
@@ -308,8 +315,8 @@ void showUserDialog(BuildContext context, String username, String email) {
           borderRadius: BorderRadius.circular(10),
         ),
         title: Center(child: Text(username)),
-        content: Container(
-          height: 110, // Set your desired height here
+        content: SizedBox(
+          height: 140, // Set your desired height here
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,

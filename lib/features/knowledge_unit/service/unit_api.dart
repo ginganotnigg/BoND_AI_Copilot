@@ -15,7 +15,6 @@ import '../../auth/service/auth_api.dart';
 class UnitApi {
   AuthApi authApi = AuthApi();
 
-
   Future<Map<String, String>> makeHeaders() async {
     String token = await AuthHelper.getAccessTokenKB() ?? '';
     return {
@@ -40,6 +39,7 @@ class UnitApi {
       'Authorization': 'Bearer $token',
     };
   }
+
   /// Fetches the list of units for a specific unit base.
   Future<UnitList> getUnitList(String knowledgeId, {int limit = 50}) async {
     final url =
@@ -50,11 +50,11 @@ class UnitApi {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return UnitList.fromJson(data);
-    } if (response.statusCode == 401) {
+    }
+    if (response.statusCode == 401) {
       await authApi.refreshToken();
       return await getUnitList(knowledgeId, limit: limit);
-    }
-    else {
+    } else {
       throw Exception('Failed to fetch units: ${response.body}');
     }
   }
@@ -76,7 +76,7 @@ class UnitApi {
   }
 
   /// Updates the status of a unit in the unit base.
-  Future<void> updateStatusUnit(String unitId, String status) async {
+  Future<void> updateStatusUnit(String unitId, bool status) async {
     final url =
         Uri.parse('$knowledgeUrl/kb-core/v1/knowledge/units/$unitId/status');
     final headers = await makeHeaders();
@@ -112,7 +112,6 @@ class UnitApi {
     ));
 
     final response = await request.send();
-    print(response.stream.bytesToString());
     if (response.statusCode != 200) {
       if (response.statusCode == 401) {
         await authApi.refreshToken();
@@ -131,7 +130,6 @@ class UnitApi {
     final response = await http.post(url,
         headers: headers,
         body: jsonEncode({'unitName': unitName, 'webUrl': webUrl}));
-    print(response.body);
     if (response.statusCode != 200) {
       if (response.statusCode == 401) {
         await authApi.refreshToken();

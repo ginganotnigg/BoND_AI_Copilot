@@ -33,7 +33,7 @@ class KnowledgeApi {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return KnowledgeList.fromJson(data);
-    }if (response.statusCode == 401) {
+    } else if (response.statusCode == 401) {
       await authApi.refreshToken();
       return await getKnowledgeList(limit: limit);
     } else {

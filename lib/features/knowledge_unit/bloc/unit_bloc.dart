@@ -30,6 +30,7 @@ class UnitBloc extends Bloc<UnitEvent, UnitState> {
       try {
         final unitApi = UnitApi();
         await unitApi.updateStatusUnit(ev.unitId, ev.status);
+        add(GetUnitListEvent(ev.knowledge));
       } catch (e) {
         emit(UnitError(e.toString()));
       }

@@ -7,6 +7,16 @@ import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(ChatInitial()) {
+    on<GetTokensEvent>((ev, emit) async {
+      final convParams = ConvParams.from(state.convParams);
+      final chatApi = ChatApi();
+      try {
+        final remainingTokens = await chatApi.getTokens();
+        emit(TokenLoaded(convParams, remainingTokens));
+      } catch (e) {
+        emit(ChatError(convParams, e.toString()));
+      }
+    });
     on<SendMessageEvent>((ev, emit) async {
       final convParams = ConvParams.from(state.convParams);
       final chatApi = ChatApi();
@@ -22,6 +32,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       } catch (e) {
         emit(ChatError(convParams, e.toString()));
       }
+      add(GetTokensEvent());
     });
     on<FirstSendMessageEvent>((ev, emit) async {
       final convParams = ConvParams([], null, ev.modelId);
@@ -39,12 +50,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       } catch (e) {
         emit(ChatError(convParams, e.toString()));
       }
+      add(GetTokensEvent());
     });
     on<GetConversationEvent>((ev, emit) async {
       final convParams = ConvParams.from(state.convParams);
-      if (ev.convId.isEmpty) {
-        return;
-      }
       convParams.conversationId = ev.convId;
       emit(ChatLoading(convParams));
       final chatApi = ChatApi();
@@ -61,5 +70,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       convParams.modelName = ev.selectedModel;
       emit(ChatResponseReceived(convParams));
     });
+
+    add(GetTokensEvent());
   }
 }

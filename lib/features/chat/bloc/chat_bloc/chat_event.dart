@@ -49,3 +49,7 @@ class FetchConversationsEvent extends ChatEvent {
 
   FetchConversationsEvent(this.selectedModel);
 }
+
+class GetTokensEvent extends ChatEvent {
+  
+}

@@ -28,18 +28,19 @@ class DeleteUnitEvent extends UnitEvent {
   DeleteUnitEvent(this.knowledge, this.unitId);
 
   @override
-  List<Object> get props => [unitId];
+  List<Object> get props => [knowledge, unitId];
 }
 
 // Update Unit Status
 class UpdateStatusUnitEvent extends UnitEvent {
+  final Knowledge knowledge;
   final String unitId;
-  final String status;
+  final bool status;
 
-  UpdateStatusUnitEvent(this.unitId, this.status);
+  UpdateStatusUnitEvent(this.knowledge, this.unitId, this.status);
 
   @override
-  List<Object> get props => [unitId, status];
+  List<Object> get props => [knowledge, unitId, status];
 }
 
 // Upload Events
@@ -61,7 +62,7 @@ class UploadWebEvent extends UnitEvent {
   UploadWebEvent(this.knowledge, this.unitName, this.webUrl);
 
   @override
-  List<Object> get props => [unitName, webUrl];
+  List<Object> get props => [knowledge, unitName, webUrl];
 }
 
 class UploadSlackEvent extends UnitEvent {
@@ -72,7 +73,7 @@ class UploadSlackEvent extends UnitEvent {
   UploadSlackEvent(this.knowledge, this.unitName, this.metadata);
 
   @override
-  List<Object> get props => [unitName, metadata];
+  List<Object> get props => [knowledge, unitName, metadata];
 }
 
 class UploadDriveEvent extends UnitEvent {
@@ -94,7 +95,7 @@ class UploadConfluenceEvent extends UnitEvent {
   UploadConfluenceEvent(this.knowledge, this.unitName, this.metadata);
 
   @override
-  List<Object> get props => [unitName, metadata];
+  List<Object> get props => [knowledge, unitName, metadata];
 }
 
 class UpdateCurrentKnowledgeEvent extends UnitEvent {

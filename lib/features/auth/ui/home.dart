@@ -113,7 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 buildListTile(context, "Story generator"),
                 const SizedBox(height: 20),
                 AIChatInput(
-                  remainingTokens: 50,
                   selectedModel: selectedModel,
                   onModelChanged: onModelChanged,
                 ),

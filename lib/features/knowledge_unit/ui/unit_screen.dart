@@ -52,7 +52,7 @@ class UnitScreen extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              context.go('/create-bot');
+              context.go('/assistant');
             },
           ),
         ),
@@ -129,8 +129,8 @@ class UnitScreen extends StatelessWidget {
                                   activeTrackColor: primaryColor,
                                   onChanged: (value) {
                                     context.read<UnitBloc>().add(
-                                        UpdateStatusUnitEvent(unit.id,
-                                            value ? 'Active' : 'Inactive'));
+                                        UpdateStatusUnitEvent(knowledge,
+                                            unit.id, value ? true : false));
                                   },
                                 ),
                                 IconButton(

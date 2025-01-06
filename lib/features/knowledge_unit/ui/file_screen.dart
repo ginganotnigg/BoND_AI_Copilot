@@ -77,7 +77,7 @@ class _FileScreenState extends State<FileScreen> {
               setState(() {
                 fileName = '';
               });
-              context.go('/create-bot');
+              context.go('/assistant');
             },
           ),
         ),
@@ -175,17 +175,16 @@ class _FileScreenState extends State<FileScreen> {
                   builder: (context, state) {
                     return ElevatedButton(
                       style: filled,
-                      onPressed: (state is UnitLoading || selectedFile == null)
-                          ? null
-                          : () {
-                              if (selectedFile == null) {
-                                return;
-                              }
-                              // final extension = selectedFile!.path.split('.').last.toLowerCase();
-                              // final mediaType = MediaType.parse('application/$extension');
-                              context.read<UnitBloc>().add(UploadLocalFileEvent(
-                                  widget.knowledge, selectedFile!));
-                            },
+                      onPressed: () {
+                        if (selectedFile == null) {
+                          return;
+                        }
+                        // final extension = selectedFile!.path.split('.').last.toLowerCase();
+                        // final mediaType = MediaType.parse('application/$extension');
+                        context.read<UnitBloc>().add(UploadLocalFileEvent(
+                            widget.knowledge, selectedFile!));
+                        context.go('/assistant');
+                      },
                       child: (state is UnitLoading)
                           ? const Stack(
                               alignment: Alignment.center,

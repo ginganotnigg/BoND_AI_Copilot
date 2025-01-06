@@ -49,7 +49,7 @@ class ConfluenceScreen extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              context.go('/create-bot');
+              context.go('/assistant');
             },
           ),
         ),
@@ -191,24 +191,22 @@ class ConfluenceScreen extends StatelessWidget {
                       builder: (context, state) {
                         return ElevatedButton(
                           style: filled,
-                          onPressed: (state is UnitLoading)
-                              ? null
-                              : () {
-                                  if (!formKey.currentState!.validate()) {
-                                    return;
-                                  }
-                                  final unitName = nameController.text;
-                                  final metadata = MetadataConfluence(
-                                    wikiPageUrl: wikiPageUrlController.text,
-                                    confluenceUsername:
-                                        confluenceUsernameController.text,
-                                    confluenceAccessToken:
-                                        confluenceAccessTokenController.text,
-                                  );
-                                  context.read<UnitBloc>().add(
-                                      UploadConfluenceEvent(
-                                          knowledge, unitName, metadata));
-                                },
+                          onPressed: () {
+                            if (!formKey.currentState!.validate()) {
+                              return;
+                            }
+                            final unitName = nameController.text;
+                            final metadata = MetadataConfluence(
+                              wikiPageUrl: wikiPageUrlController.text,
+                              confluenceUsername:
+                                  confluenceUsernameController.text,
+                              confluenceAccessToken:
+                                  confluenceAccessTokenController.text,
+                            );
+                            context.read<UnitBloc>().add(UploadConfluenceEvent(
+                                knowledge, unitName, metadata));
+                            context.go('/assistant');
+                          },
                           child: (state is UnitLoading)
                               ? const Stack(
                                   alignment: Alignment.center,

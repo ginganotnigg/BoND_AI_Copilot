@@ -30,3 +30,12 @@ class ChatError extends ChatState {
   @override
   List<Object> get props => [convParams, error];
 }
+
+class TokenLoaded extends ChatState {
+  final int tokens;
+
+  const TokenLoaded(super.convParams, this.tokens);
+
+  @override
+  List<Object> get props => [tokens];
+}
