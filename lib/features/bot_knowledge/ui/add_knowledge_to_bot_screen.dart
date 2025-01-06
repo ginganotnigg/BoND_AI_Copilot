@@ -84,19 +84,6 @@ class _AddKnowledgeToBotScreenState extends State<AddKnowledgeToBotScreen> {
           return Container();
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const AddBotScreen(),
-          //   ),
-          // );
-        },
-        icon: const Icon(Icons.add),
-        label: const Text("To Knowledge Screen"),
-        backgroundColor: Colors.blueAccent,
-      ),
     );
   }
 

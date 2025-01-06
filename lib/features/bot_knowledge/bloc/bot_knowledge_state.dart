@@ -11,7 +11,14 @@ abstract class BotKnowledgeState extends Equatable {
   List<Object?> get props => [];
 }
 
-class BotKnowledgeInitial extends BotKnowledgeState {} //emit when nothing's changed, keep same list of bots
+class BotKnowledgeInitial extends BotKnowledgeState {
+  final List<KnowledgeInBot> knowledge;
+
+  const BotKnowledgeInitial(this.knowledge);
+
+  @override
+  List<Object?> get props => [knowledge];
+} //emit when nothing's changed, keep same list of bots
 
 class BotKnowledgeLoading extends BotKnowledgeState {} //when retrieving
 

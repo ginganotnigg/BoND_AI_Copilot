@@ -46,12 +46,12 @@ class _KnowledgeInBotScreenState extends State<KnowledgeInBotScreen> {
           if (state is BotKnowledgeLoaded) {
               knowledge = state.knowledge;
           }
-          else if (state is BotKnowledgeModified) {
+          if (state is BotKnowledgeModified) {
             context.read<BotKnowledgeBloc>().add(GetKnowledgeInBotsRequested(widget.bot.id));
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
           }
-          else if (state is BotKnowledgeError) {
+          if (state is BotKnowledgeError) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.error)));
           }
@@ -65,6 +65,7 @@ class _KnowledgeInBotScreenState extends State<KnowledgeInBotScreen> {
             );
           }
           if (state is BotKnowledgeInitial) {
+            knowledge = state.knowledge;
             return Column(
               children: [
                 Expanded(

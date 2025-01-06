@@ -48,7 +48,7 @@ class BotKnowledgeApi {
   //
   Future<List<KnowledgeInBot>> getAllKnowledge() async {
     String accessToken = await AuthHelper.getAccessTokenKB() ?? '';
-    final url = Uri.parse('$knowledgeUrl/v1/knowledge');
+    final url = Uri.parse('$knowledgeUrl/kb-core/v1/knowledge');
     final headers = {
       'x-jarvis-guid': jarvisGuid,
       'Content-Type': 'application/json',

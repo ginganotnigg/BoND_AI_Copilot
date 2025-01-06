@@ -9,18 +9,17 @@ import 'bot_knowledge_state.dart';
 
 class BotKnowledgeBloc extends Bloc<BotKnowledgeEvent, BotKnowledgeState> {
   final BotKnowledgeApi bkApi = BotKnowledgeApi();
-  BotKnowledgeBloc() : super(BotKnowledgeInitial()) {
+  BotKnowledgeBloc() : super(const BotKnowledgeInitial([])) {
     on<GetKnowledgeInBotsRequested>((event, emit) async {
       emit(BotKnowledgeLoading());
       try {
         List<KnowledgeInBot> knowledge = await bkApi.getKnowledgeInBot(event.botId);
         if (knowledge.isEmpty) {
-          emit(BotKnowledgeInitial());
+          emit(const BotKnowledgeInitial([]));
         }
         else {
           emit(BotKnowledgeLoaded(knowledge));
-          //
-          emit(BotKnowledgeInitial());
+          emit(BotKnowledgeInitial(knowledge));
         }
       } catch (e) {
         emit(BotKnowledgeError("Error Getting Knowledge For Bot ID: ${event.botId}"));
