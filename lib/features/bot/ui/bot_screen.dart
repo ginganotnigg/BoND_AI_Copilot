@@ -1,3 +1,4 @@
+import 'package:bond/features/bot_chat/ui/bot_chat_screen.dart';
 import 'package:bond/shared/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,15 +50,14 @@ class _BotScreenState extends State<BotScreen> {
             bots = state.bots;
             filteredBots = bots;
           }
-          else if (state is BotSearched) {
+          if (state is BotSearched) {
             filteredBots = state.bots;
-          }
-          else if (state is BotModified) {
+          }if (state is BotModified) {
             context.read<BotBloc>().add(const GetBotsRequested());
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
           }
-          else if (state is BotError) {
+          if (state is BotError) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.error)));
           }
@@ -163,6 +163,17 @@ class _BotScreenState extends State<BotScreen> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                IconButton(
+                  icon: const Icon(Icons.chat_outlined, color: primaryColor),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BotChatScreen(bot),
+                      ),
+                    );
+                  },
+                ),
                 IconButton(
                   icon: const Icon(Icons.library_books, color: primaryColor),
                   onPressed: () {
