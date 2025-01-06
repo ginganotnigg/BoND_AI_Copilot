@@ -43,4 +43,7 @@ const String loginKBUrl = '$knowledgeUrl/kb-core/v1/auth/external-sign-in';
 const String refreshTokenKBUrl = '$knowledgeUrl/kb-core/v1/auth/refresh';
 const String botUrl = '$knowledgeUrl/kb-core/v1/ai-assistant';
 
+const String threadUrl = '$knowledgeUrl/kb-core/v1/ai-assistant/thread';
+const String updateThreadUrl = '$knowledgeUrl/kb-core/v1/ai-assistant/thread/playground';
+
 

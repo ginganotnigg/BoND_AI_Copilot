@@ -1,56 +1,56 @@
 import 'package:bond/shared/styles/styles.dart';
-import 'package:bond/features/chat/ui/chat_input.dart';
 import 'package:bond/shared/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bond/features/chat/bloc/chat_bloc/chat_bloc.dart';
-import 'package:bond/features/chat/bloc/chat_bloc/chat_event.dart';
-import 'package:bond/features/chat/bloc/chat_bloc/chat_state.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:go_router/go_router.dart';
 
-class ChatScreen extends StatefulWidget {
-  final String initialSelectedModel;
-  final String? title;
-  final String? conversationId;
+import '../../bot/models/bot.dart';
+import '../bloc/chat_bloc/bot_chat_bloc.dart';
+import '../bloc/chat_bloc/bot_chat_state.dart';
+import '../bloc/chat_bloc/bot_chat_event.dart';
+import 'bot_chat_input.dart';
 
-  const ChatScreen({
-    super.key,
-    required this.initialSelectedModel,
-    this.title,
-    this.conversationId,
-  });
+class BotChatScreen extends StatefulWidget {
+  final Bot bot;
+
+  const BotChatScreen(this.bot, {super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<BotChatScreen> createState() => _BotChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
-  late String selectedModel;
-  late String? title;
+class _BotChatScreenState extends State<BotChatScreen> {
+  String title = "Bot";
+  Bot bot = Bot("","","","","","");
 
   @override
   void initState() {
     super.initState();
-    selectedModel = widget.initialSelectedModel;
-    title = widget.title;
-  }
+    Bot bot = Bot(
+        widget.bot.updatedAt,
+        widget.bot.id,
+        widget.bot.name,
+        widget.bot.aiId,
+        widget.bot.description,
+        widget.bot.thread
+    );
 
-  void onModelChanged(String newModel) {
-    setState(() {
-      selectedModel = newModel;
-    });
+    title = bot.name;
+
+    context
+        .read<BotChatBloc>()
+        .add(CreateThreadEvent(bot));
   }
 
   Widget buildScaffold(BuildContext context) {
-    int? remainingTokens;
     return Scaffold(
       appBar: AppBar(
-        title: (title == null) ? const Text("Chat with AI") : Text(title!),
+        title: Text(title),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/');
+            context.pop();
           },
         ),
       ),
@@ -59,19 +59,46 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: [
             Expanded(
-              child: BlocBuilder<ChatBloc, ChatState>(
+              child: BlocConsumer<BotChatBloc, BotChatState>(
+                listener: (context, state) {
+                  if (state is BotThreadLoaded) {
+                    bot = state.bot;
+                    context
+                        .read<BotChatBloc>()
+                        .add(GetThreadEvent(bot));
+                  }
+                  if (state is BotChatError) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.error)));
+                    bot = Bot(
+                        widget.bot.updatedAt,
+                        widget.bot.id,
+                        widget.bot.name,
+                        widget.bot.aiId,
+                        widget.bot.description,
+                        ""
+                    );
+                    context
+                        .read<BotChatBloc>()
+                        .add(GetThreadEvent(bot));
+                  }
+                },
                 builder: (context, state) {
-                  if (state is ChatLoading &&
-                      state.convParams.messages.isEmpty) {
+                  if (state is BotChatLoading &&
+                      state.conv.messages.isEmpty) {
+                    return loadingWidget();
+                  }
+                  if (state is BotThreadLoading &&
+                      state.conv.messages.isEmpty) {
                     return loadingWidget();
                   }
                   return ListView.builder(
-                    reverse: false, // Ensures messages start from the top
+                    reverse: false,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: state.convParams.messages.length,
+                    itemCount: state.conv.messages.length,
                     itemBuilder: (context, index) {
-                      final message = state.convParams.messages[index];
+                      final message = state.conv.messages[index];
                       return Align(
                         alignment: message.role == 'user'
                             ? Alignment.centerRight
@@ -96,14 +123,14 @@ class _ChatScreenState extends State<ChatScreen> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8),
                                   child: Text(
-                                    message.aiModel,
+                                    bot.name,
                                     style: const TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
                                     ),
                                   ),
                                 ),
-                              if (message.aiModel == 'user')
+                              if (message.role == 'user')
                                 Text(
                                   message.content,
                                   style: const TextStyle(
@@ -128,14 +155,10 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
 
-            // AIChatInput fixed at the bottom
+            // AIBotChatInput fixed at the bottom
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: AIChatInput(
-                remainingTokens: remainingTokens ?? 50,
-                selectedModel: selectedModel,
-                onModelChanged: onModelChanged,
-              ),
+              child: BotChatInput(bot),
             ),
           ],
         ),
@@ -145,13 +168,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.conversationId == null) {
-      return buildScaffold(context);
-    }
-    return BlocProvider(
-        create: (_) => ChatBloc()
-          ..add(
-              GetConversationEvent(selectedModel, widget.conversationId ?? '')),
-        child: buildScaffold(context));
+    return buildScaffold(context);
   }
 }

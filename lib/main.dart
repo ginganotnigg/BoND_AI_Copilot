@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'features/auth/bloc/auth_bloc.dart';
 import 'features/bot/bloc/bot_bloc.dart';
+import 'features/bot_chat/bloc/chat_bloc/bot_chat_bloc.dart';
 import 'features/bot_knowledge/bloc/bot_knowledge_bloc.dart';
 
 void main() {
@@ -18,6 +19,7 @@ void main() {
         BlocProvider(create: (_) => BotKnowledgeBloc()),
         BlocProvider(create: (_) => ImportKnowledgeBloc()),
         BlocProvider(create: (_) => PromptBloc()),
+        BlocProvider(create: (_) => BotChatBloc()),
         //BlocProvider(create: (_) => KnowledgeBloc()),
       ],
       child: const BondAI(),
