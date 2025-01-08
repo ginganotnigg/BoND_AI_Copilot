@@ -17,44 +17,10 @@ class BotChatInput extends StatefulWidget {
 class _BotChatInputState extends State<BotChatInput> {
   final TextEditingController _controller = TextEditingController();
 
-  void sendMessageToChat(BuildContext context, String message, ) {
+  void sendMessageToChat(BuildContext context, String message) {
     context
         .read<BotChatBloc>()
         .add(SendMessageEvent(message, widget.bot));
-  }
-
-  String formatTimestamp(int timestampInSeconds) {
-    DateTime conversationDateTime =
-        DateTime.fromMillisecondsSinceEpoch(timestampInSeconds * 1000);
-    DateTime now = DateTime.now();
-    Duration difference = now.difference(conversationDateTime);
-    return formatDuration(difference);
-  }
-
-  String formatDuration(Duration duration) {
-    StringBuffer buffer = StringBuffer();
-
-    if (duration.inDays > 365) {
-      int years = duration.inDays ~/ 365;
-      buffer.write('$years year${years > 1 ? 's' : ''} ago');
-    } else if (duration.inDays > 30) {
-      int months = duration.inDays ~/ 30;
-      buffer.write('$months month${months > 1 ? 's' : ''} ago');
-    } else if (duration.inDays > 0) {
-      buffer
-          .write('${duration.inDays} day${duration.inDays > 1 ? 's' : ''} ago');
-    } else if (duration.inHours > 0) {
-      buffer.write(
-          '${duration.inHours} hour${duration.inHours > 1 ? 's' : ''} ago');
-    } else if (duration.inMinutes > 0) {
-      buffer.write(
-          '${duration.inMinutes} minute${duration.inMinutes > 1 ? 's' : ''} ago');
-    } else {
-      buffer.write(
-          '${duration.inSeconds} second${duration.inSeconds > 1 ? 's' : ''} ago');
-    }
-
-    return buffer.toString();
   }
 
   @override

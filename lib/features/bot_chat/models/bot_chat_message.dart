@@ -1,25 +1,29 @@
-import 'package:bond/features/chat/models/ai_model.dart';
+import 'dart:convert';
 
 class BotChatMessage {
   final String role;
+  final int createdAt;
   final String content;
-  final String createdAt;
 
-  BotChatMessage(this.role, this.content, this.createdAt);
+  BotChatMessage(this.role, this.createdAt, this.content);
 
   factory BotChatMessage.fromJson(Map<String, dynamic> json) {
+    String extractedContent = (json['content'] as List).isNotEmpty
+        ? json['content'][0]['text']['value']
+        : '';
+
     return BotChatMessage(
       json['role'],
-      json['content'],
-      json['createdAt']
+      json['createdAt'],
+      extractedContent,
     );
   }
+
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {
+    return {
       'role': role,
+      'createdAt': createdAt,
       'content': content,
-      'createdAt': createdAt
     };
-    return json;
   }
 }

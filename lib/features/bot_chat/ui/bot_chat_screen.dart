@@ -1,5 +1,4 @@
 import 'package:bond/shared/styles/styles.dart';
-import 'package:bond/shared/widget/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -22,28 +21,20 @@ class BotChatScreen extends StatefulWidget {
 
 class _BotChatScreenState extends State<BotChatScreen> {
   String title = "Bot";
-  Bot bot = Bot("","","","","","");
 
   @override
   void initState() {
     super.initState();
-    Bot bot = Bot(
-        widget.bot.updatedAt,
-        widget.bot.id,
-        widget.bot.name,
-        widget.bot.aiId,
-        widget.bot.description,
-        widget.bot.thread
-    );
 
-    title = bot.name;
-
-    context
-        .read<BotChatBloc>()
-        .add(CreateThreadEvent(bot));
+    title = widget.bot.name;
   }
 
   Widget buildScaffold(BuildContext context) {
+    //get thread at start
+    context
+        .read<BotChatBloc>()
+        .add(GetThreadEvent(widget.bot));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -61,52 +52,59 @@ class _BotChatScreenState extends State<BotChatScreen> {
             Expanded(
               child: BlocConsumer<BotChatBloc, BotChatState>(
                 listener: (context, state) {
-                  if (state is BotThreadLoaded) {
-                    bot = state.bot;
+                  if (state is BotChatInitial) {
                     context
                         .read<BotChatBloc>()
-                        .add(GetThreadEvent(bot));
+                        .add(GetThreadEvent(widget.bot));
                   }
+                  //
                   if (state is BotChatError) {
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text(state.error)));
-                    bot = Bot(
-                        widget.bot.updatedAt,
-                        widget.bot.id,
-                        widget.bot.name,
-                        widget.bot.aiId,
-                        widget.bot.description,
-                        ""
-                    );
+                  }
+                  //
+                  if (state is BotChatResponseReceived) {
                     context
                         .read<BotChatBloc>()
-                        .add(GetThreadEvent(bot));
+                        .add(GetThreadEvent(widget.bot));
                   }
+                  //
                 },
                 builder: (context, state) {
-                  if (state is BotChatLoading &&
-                      state.conv.messages.isEmpty) {
-                    return loadingWidget();
-                  }
-                  if (state is BotThreadLoading &&
-                      state.conv.messages.isEmpty) {
-                    return loadingWidget();
+                  if (state is BotChatLoading) {
+                    return const SizedBox.expand(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
                   }
                   return ListView.builder(
-                    reverse: false,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: state.conv.messages.length,
+                    reverse: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: state is BotChatResponseWaiting
+                        ? state.conv.messages.length + 1 // add extra line for progress indicator
+                        : state.conv.messages.length,
                     itemBuilder: (context, index) {
-                      final message = state.conv.messages[index];
+                      if (state is BotChatResponseWaiting && index == 0) {
+                        // if bot chat response waiting, last item is CircularProgressIndicator
+                        return const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      //role handling
+                      final message = state.conv.messages[
+                      state is BotChatResponseWaiting ? index - 1 : index];
                       return Align(
                         alignment: message.role == 'user'
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         child: Container(
                           constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.of(context).size.width * 0.7),
+                              maxWidth: MediaQuery.of(context).size.width * 0.7),
                           margin: const EdgeInsets.symmetric(vertical: 4.0),
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
@@ -120,10 +118,9 @@ class _BotChatScreenState extends State<BotChatScreen> {
                             children: [
                               if (message.role != 'user')
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
                                   child: Text(
-                                    bot.name,
+                                    widget.bot.name,
                                     style: const TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -141,8 +138,7 @@ class _BotChatScreenState extends State<BotChatScreen> {
                                 MarkdownBody(
                                   data: message.content,
                                   styleSheet: MarkdownStyleSheet(
-                                    p: const TextStyle(
-                                        color: Color(0xFF720F5E)),
+                                    p: const TextStyle(color: Color(0xFF720F5E)),
                                   ),
                                 ),
                             ],
@@ -151,6 +147,8 @@ class _BotChatScreenState extends State<BotChatScreen> {
                       );
                     },
                   );
+
+
                 },
               ),
             ),
@@ -158,7 +156,7 @@ class _BotChatScreenState extends State<BotChatScreen> {
             // AIBotChatInput fixed at the bottom
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: BotChatInput(bot),
+              child: BotChatInput(widget.bot),
             ),
           ],
         ),

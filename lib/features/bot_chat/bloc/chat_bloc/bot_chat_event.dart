@@ -26,12 +26,3 @@ class GetThreadEvent extends BotChatEvent {
   List<Object> get props => [bot];
 }
 
-class CreateThreadEvent extends BotChatEvent {
-  final Bot bot;
-
-  CreateThreadEvent(this.bot);
-
-  @override
-  List<Object> get props => [bot];
-}
-

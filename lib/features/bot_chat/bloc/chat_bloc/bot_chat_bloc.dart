@@ -15,9 +15,11 @@ class BotChatBloc extends Bloc<BotChatEvent, BotChatState> {
     //
     on<SendMessageEvent>((ev, emit) async {
       final conv = BotConv.from(state.conv);
-      emit(BotChatLoading(conv, ev.bot));
+      final message = ev.message;
       try {
-        await chatApi.askBot(conv, ev.bot);
+        emit(BotChatResponseWaiting(conv));
+        await chatApi.askBot(message, ev.bot);
+        emit(BotChatResponseReceived(conv, ev.bot));
       } catch (e) {
         emit(BotChatError(conv, "Fail To Send Message: $e"));
       }
@@ -26,26 +28,11 @@ class BotChatBloc extends Bloc<BotChatEvent, BotChatState> {
     on<GetThreadEvent>((ev, emit) async {
       final conv = BotConv.from(state.conv);
       try {
+        emit(BotChatLoading(conv, ev.bot));
         final updatedConv = await chatApi.getMessage(ev.bot);
-        emit(BotChatResponseReceived(updatedConv,ev.bot));
+        emit(BotChatLoaded(updatedConv));
       } catch (e) {
         emit(BotChatError(conv, "Fail To Get Thread: $e"));
-      }
-    });
-    on<CreateThreadEvent>((ev, emit) async {
-      final conv = BotConv.from(state.conv);
-      emit(BotThreadLoading(conv, ev.bot));
-      try {
-        final bot = ev.bot;
-        if (bot.thread.isNotEmpty) { //if thread is already there, no need to get new one
-          emit(BotThreadLoaded(conv, bot));
-          return;
-        }
-        final newThread = await chatApi.createNewThread(ev.bot);
-        Bot updatedBot = Bot(bot.updatedAt, bot.id, bot.name, bot.aiId, bot.description, newThread);
-        emit(BotThreadLoaded(conv, updatedBot));
-      } catch (e) {
-        emit(BotChatError(conv, "Fail To Create Thread: $e"));
       }
     });
   }

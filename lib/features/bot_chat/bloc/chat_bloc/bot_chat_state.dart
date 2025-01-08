@@ -23,26 +23,21 @@ class BotChatLoading extends BotChatState {
   List<Object> get props => [conv, bot];
 }
 
-class BotThreadLoading extends BotChatState {
-  final Bot bot;
-  const BotThreadLoading(super.conv, this.bot);
-
+class BotChatLoaded extends BotChatState {
+  const BotChatLoaded(super.conv);
   @override
-  List<Object> get props => [conv, bot];
+  List<Object> get props => [conv];
 }
 
-class BotThreadLoaded extends BotChatState {
-  final Bot bot;
-  const BotThreadLoaded(super.conv, this.bot);
-
+class BotChatResponseWaiting extends BotChatState {
+  const BotChatResponseWaiting(super.conv);
   @override
-  List<Object> get props => [conv, bot];
+  List<Object> get props => [conv];
 }
 
 class BotChatResponseReceived extends BotChatState {
   final Bot bot;
   const BotChatResponseReceived(super.conv, this.bot);
-
   @override
   List<Object> get props => [conv, bot];
 }

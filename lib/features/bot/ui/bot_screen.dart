@@ -164,7 +164,7 @@ class _BotScreenState extends State<BotScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.chat_outlined, color: primaryColor),
+                  icon: const Icon(Icons.chat, color: primaryColor),
                   onPressed: () {
                     Navigator.push(
                       context,
