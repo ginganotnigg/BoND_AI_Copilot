@@ -23,7 +23,6 @@ class BotScreen extends StatefulWidget {
 class _BotScreenState extends State<BotScreen> {
   late List<Bot> bots;
   late List<Bot> filteredBots;
-  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -32,17 +31,15 @@ class _BotScreenState extends State<BotScreen> {
     filteredBots = [];
   }
 
-  void _filterBots() {
-    context.read<BotBloc>().add(
-        SearchBotsRequested(bots, searchController.text)
-    );
+  void _filterBots(query) {
+    context.read<BotBloc>().add(SearchBotsRequested(bots, query));
   }
 
   @override
   Widget build(BuildContext context) {
     context.read<BotBloc>().add(
-      const GetBotsRequested(),
-    );
+          const GetBotsRequested(),
+        );
     return Scaffold(
       body: BlocConsumer<BotBloc, BotState>(
         listener: (context, state) {
@@ -52,7 +49,8 @@ class _BotScreenState extends State<BotScreen> {
           }
           if (state is BotSearched) {
             filteredBots = state.bots;
-          }if (state is BotModified) {
+          }
+          if (state is BotModified) {
             context.read<BotBloc>().add(const GetBotsRequested());
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
@@ -79,7 +77,7 @@ class _BotScreenState extends State<BotScreen> {
                       child: Builder(
                         builder: (context) {
                           return customSearchBar(context, (query) {
-                            _filterBots();
+                            _filterBots(query);
                           });
                         },
                       ),
@@ -144,14 +142,15 @@ class _BotScreenState extends State<BotScreen> {
           child: ListTile(
             title: Text(
               bot.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: primaryColor),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    bot.description,
-                    style: const TextStyle(color: primaryColor),
+                  bot.description,
+                  style: const TextStyle(color: primaryColor),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -211,7 +210,6 @@ class _BotScreenState extends State<BotScreen> {
   }
 }
 
-
 void showDeleteConfirmationDialog(BuildContext context, Bot bot) {
   showDialog(
     context: context,
@@ -231,8 +229,8 @@ void showDeleteConfirmationDialog(BuildContext context, Bot bot) {
             onPressed: () {
               Navigator.pop(context);
               context.read<BotBloc>().add(
-                DeleteBotRequested(bot.id),
-              );
+                    DeleteBotRequested(bot.id),
+                  );
             },
             style: filled,
             child: const Text("Delete"),
